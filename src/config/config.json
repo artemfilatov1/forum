@@ -1,0 +1,26 @@
+{
+  "development": {
+    "username": "artem-filatov",
+    "password": null,
+    "database": "usof",
+    "host": "127.0.0.1",
+    "dialect": "postgres",
+    "logging": false
+  },
+  "test": {
+    "username": "artem-filatov",
+    "password": null,
+    "database": "usof",
+    "host": "127.0.0.1",
+    "dialect": "postgres",
+    "logging": false
+  },
+  "production": {
+    "username": "artem-filatov",
+    "password": null,
+    "database": "usof",
+    "host": "127.0.0.1",
+    "dialect": "postgres",
+    "logging": false
+  }
+}
