@@ -12,10 +12,10 @@ function App() {
         <div className="App">
             <Toolbar />
             <Switch>
-                <Route path="/api/auth/login">
+                <Route path="/login">
                     <Login />
                 </Route>
-                <Route path="/api/auth/register">
+                <Route path="/register">
                     <Register />
                 </Route>
                 <Route path="/">

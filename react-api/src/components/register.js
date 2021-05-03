@@ -1,47 +1,19 @@
 import React from "react";
+import {Button, TextField} from "@material-ui/core";
+import {UseStyles} from "../styles/login";
 
 function register() {
-    const styles = {
-        main: {
-            width: '50%',
-            textAlign: 'center',
-            marginLeft: 'auto',
-            marginRight: 'auto',
-            marginTop: '5%',
-        },
-        input: {
-            width: '100%',
-            height: '20px',
-            marginBottom: '20px',
-            borderStyle:'none',
-            borderBottom: '2px solid gray',
-            fontSize: '20px',
-            padding: '5px',
-        },
-        avatar: {
-            width: '100%',
-            height: '30px',
-            marginBottom: '25px',
-        },
-        button: {
-            width: '100%',
-            height: '40px',
-            borderRadius: '3px',
-            borderStyle:'none',
-            borderBottom: '2px solid gray',
-            fontSize: '20px',
-            padding: '10px',
-        }
-    }
+    const classes = UseStyles();
     return (
-        <div className='main' style={styles.main}>
+        <div className={classes.main}>
             <h2>Register</h2>
             <form>
-                <input type="text" placeholder='login' name='login' style={styles.input}/><br/>
-                <input type="text" placeholder='password' name='password' style={styles.input}/><br/>
-                <input type="text" placeholder='confirm password' name='confirmPassword' style={styles.input}/><br/>
-                <input type="text" placeholder='email' name='email' style={styles.input}/><br/>
-                <button style={styles.button}>Send</button>
+                <TextField className={classes.input} required label='login'/>
+                <TextField className={classes.input} required label='full name'/>
+                <TextField className={classes.input} required label='email' type='email' placeholder='my@gmail.com'/>
+                <TextField className={classes.input} required label='password' type='password'/>
+                <TextField className={classes.input} required label='confirm password' type='password'/>
+                <Button className={classes.button} variant='contained' color='primary'>Send</Button>
             </form>
         </div>
     )

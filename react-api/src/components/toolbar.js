@@ -1,31 +1,21 @@
 import React from "react";
+import {Link} from "react-router-dom";
+import {UseStyles} from "../styles/toolbar";
+import {Button, ButtonGroup} from "@material-ui/core";
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
 
 function toolbar() {
-    const styles = {
-        toolbar: {
-            width: '100%',
-            display: 'flex',
-            textAlign: 'center',
-            paddingBottom: '20px',
-            paddingTop: '20px',
-            backgroundColor: 'gray',
-            boxShadow: '0 0 10px rgba(0,0,0,0.5)',
-            margin: '0px'
-        },
-        a: {
-            color: 'white',
-            fontSize: '20px',
-            marginRight: '20px',
-            marginLeft: '20px',
-        }
-    }
+    const classes = UseStyles();
     return (
-        <div>
-            <div style={styles.toolbar}>
-                <a href="/api/auth/login" style={styles.a}>login</a>
-                <a href="/api/auth/register" style={styles.a}>register</a>
-                <a href="/" style={styles.a}>home</a>
-            </div>
+        <div className={classes.root}>
+            <AppBar className={classes.toolbar} position="static">
+                <Toolbar>
+                    <Link className={classes.home} to="/">home</Link>
+                    <Link className={classes.login} to="/login">sing in</Link>
+                    <Button className={classes.register} href='/register' variant='contained' color='primary'>register</Button>
+                </Toolbar>
+            </AppBar>
         </div>
     )
 }
