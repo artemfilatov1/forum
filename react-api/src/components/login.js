@@ -1,6 +1,6 @@
 import React from "react";
 
-function register() {
+function login() {
     const styles = {
         main: {
             width: '50%',
@@ -35,16 +35,14 @@ function register() {
     }
     return (
         <div className='main' style={styles.main}>
-            <h2>Register</h2>
+            <h2>Login</h2>
             <form>
                 <input type="text" placeholder='login' name='login' style={styles.input}/><br/>
                 <input type="text" placeholder='password' name='password' style={styles.input}/><br/>
-                <input type="text" placeholder='confirm password' name='confirmPassword' style={styles.input}/><br/>
-                <input type="text" placeholder='email' name='email' style={styles.input}/><br/>
                 <button style={styles.button}>Send</button>
             </form>
         </div>
     )
 }
 
-export default register;
+export default login;
