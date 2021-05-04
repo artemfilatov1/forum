@@ -7,23 +7,29 @@ export const UseStyles =  makeStyles((theme)=>({
     root: {
         flexGrow: 1,
     },
-    home: {
-        marginRight: theme.spacing(2),
-        flexGrow: 7,
+    a: {
+        fontFamily: 'initial',
+        padding: '10px',
+        marginRight: '20px',
         textAlign: 'left',
         color: 'white',
-        fontSize: '20px',
+        fontSize: '15px',
         textDecoration: 'none',
+        '&:hover':{
+            color: 'black'
+        }
     },
-
-    register: {
-        flexGrow: 1,
+    button: {
+        fontSize: '15px',
+        fontFamily: 'initial',
     },
-    login: {
+    auth: {
         flexGrow: 1,
-        height: '100%',
-        color: 'white',
-        fontSize: '20px',
-        textDecoration: 'none',
+        marginRight: '0px',
+        textAlign: 'right',
+    },
+    homeDiv: {
+        flexGrow: 7,
+        textAlign: 'left',
     },
 }));

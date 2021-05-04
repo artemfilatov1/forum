@@ -11,9 +11,13 @@ function toolbar() {
         <div className={classes.root}>
             <AppBar className={classes.toolbar} position="static">
                 <Toolbar>
-                    <Link className={classes.home} to="/">home</Link>
-                    <Link className={classes.login} to="/login">sing in</Link>
-                    <Button className={classes.register} href='/register' variant='contained' color='primary'>register</Button>
+                    <div className={classes.homeDiv}>
+                        <Link className={classes.a} to="/">HOME</Link>
+                    </div>
+                    <div className={classes.auth}>
+                        <Link className={classes.a} to="/login">SING IN</Link>
+                        <Button className={classes.button} variant='contained' color='primary' href='/register'>REGISTER</Button>
+                    </div>
                 </Toolbar>
             </AppBar>
         </div>
