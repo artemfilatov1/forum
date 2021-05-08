@@ -5,7 +5,6 @@ import config from "../../config";
 const initialState = {
     user: null,
     error: null,
-    isPending: false,
     token: localStorage.getItem('token')
 };
 
@@ -26,6 +25,7 @@ const slice = createSlice({
         logOut: (state, action) => {
             localStorage.removeItem('token');
             state.token = null;
+            state.user = null;
         },
         registerSuccess: (state, action) => {
             state.user = null;
@@ -50,6 +50,7 @@ const slice = createSlice({
             state.error = action.payload;
         },
         VerifyEmailFailure: (state, action) => {
+            console.log(action.payload);
             state.error = action.payload;
         }
     }
@@ -91,7 +92,7 @@ export const sendRegister = (user, history) => async dispatch => {
         history.push('/login');
     } catch (err) {
         console.log(err.response.data);
-        dispatch(registerFailure(err.response.data.error))
+        dispatch(registerFailure(err.response.data.error));
     }
 }
 
@@ -103,7 +104,7 @@ export const sendReset = (user, history) => async dispatch => {
         dispatch(resetSuccess());
         history.push('/login');
     } catch (err) {
-        dispatch(resetFailure(err.response.data.error))
+        dispatch(resetFailure(err.response.data.error));
     }
 }
 
@@ -112,16 +113,15 @@ export const sendNewPsw = (user, history, token) => async dispatch => {
         await axios.post(`${config.url}/api/auth/password-reset/${token}`, user);
         history.push('/login');
     } catch (err) {
-        dispatch(newPswFailure(err.response.data.error))
+        dispatch(newPswFailure(err.response.data.error));
     }
 }
 
 export const sendVerifyEmail = (token) => async dispatch => {
     try {
-        await axios.get(`${config.url}/api/auth/verify-email/${token}`);
-        // dispatch(VerifyEmailSuccess(err.response.data.error))
+        await axios.get(`${config.url}/api/auth/register/verify-email/${token}`);
     } catch (err) {
-        console.log(err.response.data.error)
-        dispatch(VerifyEmailFailure(err.response.data.error))
+        console.log(err.response.data.error);
+        dispatch(VerifyEmailFailure(err.response.data.error));
     }
 }

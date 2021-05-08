@@ -8,12 +8,11 @@ export const UseStyles =  makeStyles((theme)=>({
         flexGrow: 1,
     },
     a: {
-        fontFamily: 'initial',
+        font: 'italic small-caps bold 15px cursive',
         padding: '10px',
         marginRight: '20px',
         textAlign: 'left',
         color: 'white',
-        fontSize: '15px',
         textDecoration: 'none',
         '&:hover':{
             color: 'black'
@@ -21,7 +20,7 @@ export const UseStyles =  makeStyles((theme)=>({
     },
     button: {
         fontSize: '15px',
-        fontFamily: 'initial',
+        // fontFamily: 'initial',
     },
     auth: {
         flexGrow: 1,

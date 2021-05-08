@@ -1,7 +1,7 @@
 import React from "react";
 import {Button, TextField} from "@material-ui/core";
-import {UseStyles} from "../styles/login";
-import {sendRegister} from "../redux/modules/auth";
+import {UseStyles} from "../../styles/login";
+import {sendRegister} from "../../redux/modules/auth";
 import * as rr from "react-redux";
 import * as rd from "react-router-dom";
 import * as r from "react";
