@@ -37,7 +37,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     profile_picture: {
       type: DataTypes.TEXT,
-      defaultValue: ''
+      defaultValue: 'default.png'
     },
     rating: {
       type: DataTypes.INTEGER,

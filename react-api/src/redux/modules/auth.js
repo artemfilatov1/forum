@@ -5,7 +5,7 @@ import config from "../../config";
 const initialState = {
     user: null,
     error: null,
-    token: localStorage.getItem('token')
+    token: null,
 };
 
 const slice = createSlice({
@@ -14,16 +14,14 @@ const slice = createSlice({
     reducers: {
         loginSuccess: (state, action) => {
             console.log(action);
-            localStorage.setItem('token', action.payload.token);
             state.user = action.payload.user;
-            state.token = localStorage.getItem('token');
+            state.token = action.payload.token;
         },
         loginFailure : (state, action) => {
             state.user = null;
             state.error = action.payload;
         },
         logOut: (state, action) => {
-            localStorage.removeItem('token');
             state.token = null;
             state.user = null;
         },
@@ -49,10 +47,14 @@ const slice = createSlice({
         newPswFailure: (state, action) => {
             state.error = action.payload;
         },
-        VerifyEmailFailure: (state, action) => {
+        verifyEmailFailure: (state, action) => {
             console.log(action.payload);
             state.error = action.payload;
-        }
+        },
+        clearError: (state, action) => {
+            console.log(action.payload);
+            state.error = action.payload;
+        },
     }
 })
 export default slice.reducer;
@@ -67,7 +69,8 @@ const {
     resetSuccess,
     resetPending,
     newPswFailure,
-    VerifyEmailFailure
+    verifyEmailFailure,
+    clearError,
 } = slice.actions;
 
 export const sendLogin = (user, history) => async dispatch => {
@@ -86,7 +89,6 @@ export const sendLogOut = () => async dispatch => {
 
 export const sendRegister = (user, history) => async dispatch => {
     try {
-        console.log(user);
         await axios.post(`${config.url}/api/auth/register`, user);
         dispatch(registerSuccess());
         history.push('/login');
@@ -100,7 +102,6 @@ export const sendReset = (user, history) => async dispatch => {
     try {
         dispatch(resetPending())
         await axios.post(`${config.url}/api/auth/password-reset`, user);
-
         dispatch(resetSuccess());
         history.push('/login');
     } catch (err) {
@@ -122,6 +123,10 @@ export const sendVerifyEmail = (token) => async dispatch => {
         await axios.get(`${config.url}/api/auth/register/verify-email/${token}`);
     } catch (err) {
         console.log(err.response.data.error);
-        dispatch(VerifyEmailFailure(err.response.data.error));
+        dispatch(verifyEmailFailure(err.response.data.error));
     }
+}
+
+export const sendClearError = (token) => async dispatch => {
+    dispatch(clearError());
 }

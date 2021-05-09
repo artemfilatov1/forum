@@ -8,11 +8,17 @@ const limits = {
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, path.join(__dirname, '../../public/img'));
+        cb(null, path.join(__dirname, '../../public'));
     },
     filename: (req, file, cb) => {
+        const date = Date.now();
         const type = file.originalname.split('.')[1];
-        cb(null, `${file.fieldname}.${type}`);
+        if (type !== 'jpg' && type !== 'png') {
+            console.log(type);
+            cb(new Error('Undefined type of file. Must be jpg or png'));
+            return;
+        }
+        cb(null, file.fieldname + '-' + date + '.' + type); 
     },
 });
 

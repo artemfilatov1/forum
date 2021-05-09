@@ -1,10 +1,12 @@
 import React from "react";
 import {Button, TextField} from "@material-ui/core";
+import {Alert, AlertTitle} from "@material-ui/lab";
 import {UseStyles} from "../../styles/login";
 import {sendLogin} from "../../redux/modules/auth";
 import * as rr from "react-redux";
 import * as rd from "react-router-dom";
 import * as r from "react";
+import {sendClearError} from "../../redux/modules/auth";
 
 function login() {
     const classes = UseStyles();
@@ -24,11 +26,21 @@ function login() {
     const onChangeLogin = (e) => setLogin(e.target.value);
     const onChangePassword = (e) => setPassword(e.target.value);
 
+    r.useEffect(() => {
+        dispatch(sendClearError());
+    },[])
+
     return (
         <div className={classes.main}>
             <h2>Sing in</h2>
             <form onSubmit={handleSubmit}>
-                {user.error && <div>{user.error}</div>}
+                {user.error && 
+                    <Alert className={classes.error} severity="error">
+                        {/* <AlertTitle>Error</AlertTitle> */}
+                        {user.error}
+                    </Alert>
+                }
+
                 <TextField onChange={onChangeLogin} className={classes.input } required label='login'/>
                 <TextField onChange={onChangePassword} className={classes.input} required label='password' type='password'/>
                 <Button className={classes.button} type="submit" variant='contained' color='primary'>Send</Button>

@@ -2,7 +2,7 @@ module.exports.getAllCategories = async (ctx) => {
     try {
         const categories = ctx.db.Categories;
         const all = await categories.findAll();
-        ctx.body = {all: all};
+        ctx.body = all;
         ctx.status = 200;
     } catch (err){
         ctx.body = {error: err.message};
@@ -15,7 +15,7 @@ module.exports.getCategoryById = async (ctx) => {
         const categories = ctx.db.Categories;
         const {id} = ctx.params;
         const category = await categories.findOne({where: {id: id}});
-        ctx.body = {category: category};
+        ctx.body = category;
         ctx.status = 200;
     } catch (err){
         ctx.body = {error: err.message};
@@ -31,7 +31,7 @@ module.exports.getAllPostsFormCategory = async (ctx) => {
         const category = await categories.findByPk(id, {
             include: posts,
         });
-        ctx.body = {all: category.Posts};
+        ctx.body = category.Posts;
         ctx.status = 200;
     } catch (err){
         ctx.body = {error: err.message};
@@ -47,7 +47,7 @@ module.exports.newCategory = async (ctx) => {
             title: body.title,
             description: body.description
         });
-        ctx.body = {category: category};
+        ctx.body = category;
         ctx.status = 200;
     } catch (err){
         ctx.body = {error: err.message};
@@ -64,7 +64,7 @@ module.exports.updateCategory = async (ctx) => {
             title: body.title,
             description: body.description
         });
-        ctx.body = {category: newCategory};
+        ctx.body = newCategory;
         ctx.status = 200;
     } catch (err){
         ctx.body = {error: err.message};

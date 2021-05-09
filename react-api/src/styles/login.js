@@ -16,5 +16,9 @@ export const UseStyles =  makeStyles({
         width: '100%',
         height: '40px',
         marginTop: '10px'
+    },
+    error: {
+        marginBottom: 10,
+        
     }
 });

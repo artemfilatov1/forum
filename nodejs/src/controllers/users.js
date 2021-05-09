@@ -6,7 +6,7 @@ module.exports.getAllUsers = async (ctx) => {
     try {
         const users = ctx.db.Users;
         const all = await users.findAll();
-        ctx.body = {all: all};
+        ctx.body = all;
     } catch (err) {
         ctx.body = { error: err.message };
         ctx.status = 400;
@@ -18,7 +18,7 @@ module.exports.getUserById = async (ctx) => {
         const users = ctx.db.Users;
         const {user_id} = await ctx.params;
         const one = await users.findOne({ where: { id: user_id } })
-        ctx.body = {one: one};
+        ctx.body = one;
     } catch (err) {
         ctx.body = { error: err.message };
         ctx.status = 400;
@@ -49,8 +49,7 @@ module.exports.setAvatar = async (ctx) => {
         const avatar = ctx.file.filename;
         const id =  ctx.authToken;
         const one = await users.findOne({ where: { id: id } });
-        const url = `../../public/img/${avatar}`
-        await one.update({profile_picture: url});
+        await one.update({profile_picture: avatar});
         ctx.body = { msg: 'set user avatar successfully' }
         ctx.status = 200;
     } catch (err) {

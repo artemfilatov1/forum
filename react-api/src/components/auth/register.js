@@ -1,10 +1,12 @@
 import React from "react";
 import {Button, TextField} from "@material-ui/core";
+import {Alert, AlertTitle} from "@material-ui/lab";
 import {UseStyles} from "../../styles/login";
 import {sendRegister} from "../../redux/modules/auth";
 import * as rr from "react-redux";
 import * as rd from "react-router-dom";
 import * as r from "react";
+import {sendClearError} from "../../redux/modules/auth";
 
 function register() {
     const classes = UseStyles();
@@ -25,6 +27,10 @@ function register() {
         dispatch(sendRegister(User, history));
     }
 
+    r.useEffect(() => {
+        dispatch(sendClearError());
+    },[])
+
     const onChangeLogin = (e) => setLogin(e.target.value);
     const onChangeName = (e) => setFullName(e.target.value);
     const onChangePassword = (e) => setPassword(e.target.value);
@@ -35,7 +41,12 @@ function register() {
         <div className={classes.main}>
             <h2>Register</h2>
             <form onSubmit={handleSubmit}>
-                {user.error && <div>{user.error}</div>}
+                {user.error && 
+                    <Alert className={classes.error} severity="error">
+                        <AlertTitle>Error</AlertTitle>
+                        {user.error}
+                    </Alert>
+                }
                 <TextField onChange={onChangeLogin} className={classes.input} required label='login'/>
                 <TextField onChange={onChangeName} className={classes.input} required label='full name'/>
                 <TextField onChange={onChangeEmail} className={classes.input} required label='email' type='email' placeholder='my@gmail.com'/>

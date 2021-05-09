@@ -5,7 +5,7 @@ module.exports.getAllPosts = async (ctx) => {
     try {
         const posts = ctx.db.Posts;
         const all = await posts.findAll();
-        ctx.body = {all: all};
+        ctx.body = all;
         ctx.status = 200;
     } catch (err){
         ctx.body = {error: err.message};
@@ -34,7 +34,7 @@ module.exports.getAllCommentsFormPost = async (ctx) => {
         const post = await posts.findByPk(id, {
             include: comments,
         });
-        ctx.body = {all: post.Comments};
+        ctx.body = post.Comments;
         ctx.status = 200;
     } catch (err){
         ctx.body = {error: err.message};
@@ -57,7 +57,7 @@ module.exports.newComment = async (ctx) => {
             userId: decode.id,
             postId: id
         })
-        ctx.body = {post: post};
+        ctx.body = post;
         ctx.status = 200;
     } catch (err){
         ctx.body = {error: err.message};
@@ -73,7 +73,7 @@ module.exports.getAllCategoriesFromPost = async (ctx) => {
             where: {id : id},
             include: ctx.db.Categories,
         });
-        ctx.body = {all: post.Categories};
+        ctx.body = post.Categories;
         ctx.status = 200;
     } catch (err){
         ctx.body = {error: err.message};
@@ -89,7 +89,7 @@ module.exports.getAllLikesFromPost = async (ctx) => {
             where: {id : id},
             include: ctx.db.LikesToPosts,
         });
-        ctx.body = {all: post.LikesToPosts};
+        ctx.body = post.LikesToPosts;
         ctx.status = 200;
     } catch (err){
         ctx.body = {error: err.message};
@@ -112,7 +112,7 @@ module.exports.newPost = async (ctx) => {
         });
         const category = await ctx.db.Categories.findOne({where: {id: body.categories}});
         await post.addCategories(category);
-        ctx.body = {post: post};
+        ctx.body = post;
         ctx.status = 200;
     } catch (err){
         ctx.body = {error: err.message};
@@ -140,7 +140,7 @@ module.exports.newLike = async (ctx) => {
             userId: decode.id,
             postId: post.id
         });
-        ctx.body = {like: like};
+        ctx.body = like;
         ctx.status = 200;
     } catch (err){
         ctx.body = {error: err.message};
@@ -157,7 +157,7 @@ module.exports.updatePost = async (ctx) => {
             title: body.title,
             content: body.content,
         });
-        ctx.body = {post: newPost};
+        ctx.body = newPost;
         ctx.status = 200;
     } catch (err){
         ctx.body = {error: err.message};

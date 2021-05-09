@@ -9,7 +9,9 @@ import RegisterVerify from "./components/auth/registerVerify";
 import Home from "./components/home/home";
 import Toolbar from "./components/toolbar/toolbar";
 import NotFound from "./components/extra/notfound";
-import Account from "./components/account/account";
+import Users from "./components/db/users";
+import Posts from "./components/db/posts";
+import UserAcc from "./components/db/userAcc";
 
 import {RouteClient, RouteGuest} from "./components/extra/route";
 
@@ -21,12 +23,15 @@ function App(){
         <div className="App">
             {<Toolbar />}
             <Switch>
-                <RouteGuest path="/login" component={Login}/>
-                <RouteGuest path="/register" component={Register}/>
-                <RouteGuest path="/register/verify-email/:token" component={RegisterVerify}/>
-                <RouteClient path="/account" component={Account}/>
+                <RouteGuest exact path="/login" component={Login}/>
+                <RouteGuest exact path="/register" component={Register}/>
+                <RouteGuest exact path="/register/verify-email/:token" component={RegisterVerify}/>
+                <Route exact path="/db/users/:id" component={UserAcc} />
+                <Route exact path="/db/users" component={Users} />
+                <Route exact path="/db/posts" component={Posts} />
                 <Route exact path="/" component={Home} />
-                <Route path="/404" component={NotFound} />
+                <Route exact path="/404" component={NotFound} />
+                {/* <Redirect to='/404'/> */}
             </Switch>
         </div>
     </Router>

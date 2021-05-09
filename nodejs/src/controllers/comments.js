@@ -6,7 +6,7 @@ module.exports.getCommentById = async (ctx) => {
         const comments = ctx.db.Comments;
         const {id} = ctx.params;
         const comment = await comments.findOne({where: {id: id}});
-        ctx.body = {comment: comment};
+        ctx.body = comment;
         ctx.status = 200;
     } catch (err){
         ctx.body = {error: err.message};
@@ -22,7 +22,7 @@ module.exports.getAllLikesFormComment = async (ctx) => {
         const comment = await comments.findByPk(id, {
             include: likes,
         });
-        ctx.body = {all: comment.LikesToComments};
+        ctx.body = comment.LikesToComments;
         ctx.status = 200;
     } catch (err){
         ctx.body = {error: err.message};
@@ -49,7 +49,7 @@ module.exports.newLike = async (ctx) => {
             userId: decode.id,
             commentId: comment.id
         });
-        ctx.body = {like: like};
+        ctx.body = like;
         ctx.status = 200;
     } catch (err){
         ctx.body = {error: err.message};
@@ -65,7 +65,7 @@ module.exports.updateComment = async (ctx) => {
         const newComment = await comment.update({
             content: body.content
         });
-        ctx.body = {comment: newComment};
+        ctx.body = newComment;
         ctx.status = 200;
     } catch (err){
         ctx.body = {error: err.message};

@@ -10,10 +10,9 @@ module.exports.register = async ctx => {
         user.password = await argon2.hash(user.password);
         const usrDb = await users.create(user);
         const token = await jwt.sign({id: usrDb.id}, config.token.verifyEmailToken, {expiresIn: "1h"});
-        const url = `http://localhost:5000/api/auth/register/verify-email/${token}`
-
+        const url = `http://localhost:3000/register/verify-email/${token}`
         await mail.sendToVerify(user.email, url, 'click to verify account', '');
-        ctx.body = {user, token};
+        ctx.body = {user: usrDb, token: token};
         ctx.status = 201;
     } catch (err) {
         ctx.body = { error: err.message };
@@ -45,7 +44,7 @@ module.exports.login = async (ctx) => {
         if (!ok) throw new Error('wrong account password');
         if (!usrDb.isVerified) throw new Error('u must to verify account');
         const token = await jwt.sign({id: usrDb.id}, config.token.accessToken, {expiresIn: '7d'});
-        ctx.body = {msg: 'login successfully!', token: token};
+        ctx.body = {user: usrDb, token: token};
     } catch (err){
         ctx.status = 401;
         ctx.body = { error: err.message };
@@ -60,7 +59,7 @@ module.exports.passwordReset = async (ctx) => {
         const token = await jwt.sign({id: usrDB.id}, config.token.verifyEmailToken, {expiresIn: "1h"});
         const url = `/api/auth/password-reset/${token}`
         await mail.sendToVerify(usrDB.email, url, 'click to account password', '');
-        ctx.body = {token: token}
+        ctx.body = token;
     } catch (err){
         ctx.status = 400;
         ctx.body = { error: err.message };
