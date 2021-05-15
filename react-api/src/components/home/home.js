@@ -6,8 +6,12 @@ import {CustomCard} from '../extra/card'
 function home() {
     return (
         <Box display='flex'>
-            {CustomCard('Users', 'U can wach or find some people', '/db/users')}
-            {CustomCard('Posts', 'U can wach or find some post', '/db/posts')}
+            <CustomCard title={'users'} 
+                content={'U can watch or find some people'}
+                to={`/db/users`}/>
+            <CustomCard title={'posts'} 
+                content={'U can watch or find some post'}
+                to={`/db/posts`}/>
         </Box>
     );
 

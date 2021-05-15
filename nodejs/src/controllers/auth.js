@@ -44,7 +44,7 @@ module.exports.login = async (ctx) => {
         if (!ok) throw new Error('wrong account password');
         if (!usrDb.isVerified) throw new Error('u must to verify account');
         const token = await jwt.sign({id: usrDb.id}, config.token.accessToken, {expiresIn: '7d'});
-        ctx.body = {user: usrDb, token: token};
+        ctx.body = {token: token, user: usrDb};
     } catch (err){
         ctx.status = 401;
         ctx.body = { error: err.message };

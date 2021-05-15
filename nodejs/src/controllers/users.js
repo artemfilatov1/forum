@@ -50,7 +50,7 @@ module.exports.setAvatar = async (ctx) => {
         const id =  ctx.authToken;
         const one = await users.findOne({ where: { id: id } });
         await one.update({profile_picture: avatar});
-        ctx.body = { msg: 'set user avatar successfully' }
+        ctx.body = avatar;
         ctx.status = 200;
     } catch (err) {
         ctx.body = { error: err.message };

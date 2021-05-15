@@ -1,57 +1,85 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from "axios";
 import config from "../../config";
-import {parseToken} from "../../utils/parseToken";
+import {setAvatar} from "./auth";
+import * as rr from "react-redux";
+
+export const sendGetUserById = createAsyncThunk(
+    'users/sendGetUserById',
+    async (id, thunkAPI) => {
+        try {
+            if (!id) return null;
+            const res = await axios.get(`${config.url}/api/users/${id}`);
+            return res.data;
+        } catch (err) {
+
+        }
+    }
+)
+
+export const sendGetAllUsers = createAsyncThunk(
+    'users/sendGetAllUsers',
+    async (thunkAPI) => {
+        try {
+            const res = await axios.get(`${config.url}/api/users`);
+            return res.data;
+        } catch (err) {
+
+        }
+    }
+)
+
+export const sendDeleteUser = createAsyncThunk(
+    'users/sendDeleteUser',
+    async (id) => {
+        try {
+            await axios.delete(`${config.url}/api/users/${id}`);
+            return;
+        } catch (err) {
+
+        }
+    }
+)
+
+export const sendSetAvatar = createAsyncThunk(
+    'users/sendSetAvatar',
+    async (props, thunkAPI) => {
+        try {
+            let header = { headers: { Authorization: `Bearer ${props.token}` }}
+            const res = await axios.post(`${config.url}/api/users/avatar`, props.file, header);
+            return res.data;
+        } catch (err) {
+
+        }
+    }
+)
 
 const initialState = {
     users: [],
     specUser: null,
     error: null,
+    status: 'idle',
 };
 
 const slice = createSlice({
     name: 'users',
     initialState: initialState,
-    reducers: {
-        setUsersSuccess: (state, action) => {
-            state.users = action.payload;
-        },
-        setSpecUserSuccess: (state, action) => {
+    reducers: {},
+    extraReducers: {
+        [sendGetUserById.fulfilled]: (state, action) => {
             state.specUser = action.payload;
         },
-        deleteUserSuccess: (state, action) => {
+        [sendGetAllUsers.fulfilled]: (state, action) => {
+            state.users = action.payload;
+            state.specUser = null;
+        },
+        [sendDeleteUser.fulfilled]: (state, action) => {
+            state.specUser = null;
             state.users = null;
-        }
+        },
+        [sendSetAvatar.fulfilled]: (state, action) => {
+            state.specUser.profile_picture = action.payload;
+        },
     }
 })
 export default slice.reducer;
-
-const {deleteUserSuccess, setUsersSuccess, setSpecUserSuccess} = slice.actions;
-
-export const sendGetAllUsers = () => async dispatch => {
-    try {
-        const res = await axios.get(`${config.url}/api/users`);
-        dispatch(setUsersSuccess(res.data));
-    } catch (err) {
-        // dispatch(deleteFailure());
-    }
-}
-
-export const sendGetUserById = (id) => async dispatch => {
-    try {
-        const res = await axios.get(`${config.url}/api/users/${id}`);
-        dispatch(setSpecUserSuccess(res.data));
-    } catch (err) {
-        // dispatch(deleteFailure());
-    }
-}
-
-export const sendDeleteUser = (id) => async dispatch => {
-    try {
-        await axios.delete(`${config.url}/api/users/${id}`);
-        dispatch(deleteUserSuccess());
-    } catch (err) {
-        // dispatch(deleteFailure());
-    }
-}
-

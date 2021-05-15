@@ -11,8 +11,10 @@ function verify() {
     const { token } = rd.useParams();
 
     r.useEffect(() => {
-        dispatch(sendVerifyEmail(token))
-    },[])
+        if (user.status === 'idle'){
+            dispatch(sendVerifyEmail(token))
+        }
+    },[dispatch])
 
     const ok = (
         <div>

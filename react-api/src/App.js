@@ -1,7 +1,6 @@
 import React from "react";
 import "./App.css"
 import {BrowserRouter as Router, Switch, Route, Redirect} from "react-router-dom";
-import * as rr from "react-redux";
 
 import Login from "./components/auth/login";
 import Register from "./components/auth/register";
@@ -12,21 +11,22 @@ import NotFound from "./components/extra/notfound";
 import Users from "./components/db/users";
 import Posts from "./components/db/posts";
 import UserAcc from "./components/db/userAcc";
+import specPost from "./components/db/specPost";
 
 import {RouteClient, RouteGuest} from "./components/extra/route";
 
 function App(){
-  const user = rr.useSelector(state => state.auth);
-
+    console.log('app');
   return (
     <Router>
         <div className="App">
-            {<Toolbar />}
+            <Toolbar/>
             <Switch>
                 <RouteGuest exact path="/login" component={Login}/>
                 <RouteGuest exact path="/register" component={Register}/>
                 <RouteGuest exact path="/register/verify-email/:token" component={RegisterVerify}/>
                 <Route exact path="/db/users/:id" component={UserAcc} />
+                <Route exact path="/db/posts/:id" component={specPost} />
                 <Route exact path="/db/users" component={Users} />
                 <Route exact path="/db/posts" component={Posts} />
                 <Route exact path="/" component={Home} />

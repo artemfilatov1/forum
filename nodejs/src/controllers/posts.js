@@ -18,7 +18,7 @@ module.exports.getPostById = async (ctx) => {
         const posts = ctx.db.Posts;
         const {id} = ctx.params;
         const post = await posts.findOne({where: {id: id}});
-        ctx.body = {post: post};
+        ctx.body = post;
         ctx.status = 200;
     } catch (err){
         ctx.body = {error: err.message};
@@ -105,7 +105,7 @@ module.exports.newPost = async (ctx) => {
         const decode = await jwt.verify(token, config.token.accessToken);
         const post = await posts.create({
             title: body.title,
-            publish_data: new Date(),
+            publish_date: new Date(),
             status: 'live',
             content: body.content,
             userId: decode.id

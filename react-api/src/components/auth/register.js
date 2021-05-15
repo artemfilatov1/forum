@@ -6,7 +6,6 @@ import {sendRegister} from "../../redux/modules/auth";
 import * as rr from "react-redux";
 import * as rd from "react-router-dom";
 import * as r from "react";
-import {sendClearError} from "../../redux/modules/auth";
 
 function register() {
     const classes = UseStyles();
@@ -23,13 +22,11 @@ function register() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const User = { full_name, login, email, password, password_confirmation };
-        console.log('in');
-        dispatch(sendRegister(User, history));
+        if (user.status === 'idle'){
+            dispatch(sendRegister(User));
+            history.push('/login');
+        }
     }
-
-    r.useEffect(() => {
-        dispatch(sendClearError());
-    },[])
 
     const onChangeLogin = (e) => setLogin(e.target.value);
     const onChangeName = (e) => setFullName(e.target.value);

@@ -2,12 +2,13 @@ const multer = require('@koa/multer');
 const path = require('path');
 
 const limits = {
-    // fileSize: 1024 * 1024,
-    files: 1,
+    fileSize: 1313131 * 31313131,
+    files: 10,
 };
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
+        console.log(file);
         cb(null, path.join(__dirname, '../../public'));
     },
     filename: (req, file, cb) => {

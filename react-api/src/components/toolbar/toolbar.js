@@ -11,44 +11,18 @@ import AddIcon from '@material-ui/icons/Add';
 import SearchIcon from '@material-ui/icons/Search';
 import Fab from '@material-ui/core/Fab';
 import Tooltip from '@material-ui/core/Tooltip';
+import {parseToken} from '../../utils/parseToken';
+
 
 function toolbar() {
     const classes = UseStyles();
     const user = rr.useSelector(state => state.auth);
     const history = rd.useHistory();
-    let id = ''
-    let profile_picture = ''
-    if (user.user) {
-        id = user.user.id;
-        profile_picture = user.user.profile_picture
-    }
+    let decode = parseToken(user.token);
 
     const register = () => {
         history.push('/register');
     }
-
-    const guest = (
-        <div>
-            <Link className={classes.a} to="/login">SING IN</Link>
-            <Button className={classes.button}
-            onClick={register}
-            variant='contained' color='primary'>REGISTER</Button>
-        </div>
-    );
-    const client = (
-        <Box display='flex'>
-            <Tooltip title="Add post" aria-label="add">
-                <Fab color="primary" size="small">
-                    <AddIcon />
-                </Fab>
-            </Tooltip>
-            <Tooltip title="account" aria-label="add" style={{marginLeft: 10}}>
-                <Link to={`/db/users/${id}`}>
-                    <Avatar alt="Remy Sharp" src={`${config.url}/${profile_picture}`} className={classes.img}/>
-                </Link>
-            </Tooltip>
-        </Box>
-    );
 
     return (
         <div className={classes.root}>
@@ -70,8 +44,28 @@ function toolbar() {
                             inputProps={{ 'aria-label': 'search' }}
                         />
                     </div>
-                    {!user.token && guest}
-                    {user.token && client}
+                    {!user.token &&
+                    <div>
+                        <Link className={classes.a} to="/login">SING IN</Link>
+                        <Button className={classes.button}
+                                onClick={register}
+                                variant='contained' color='primary'>REGISTER</Button>
+                    </div>
+                    }
+                    {user.token && decode && user.user &&
+                    <Box display='flex'>
+                        <Tooltip title="Add post" aria-label="add">
+                            <Fab color="primary" size="small">
+                                <AddIcon />
+                            </Fab>
+                        </Tooltip>
+                        <Tooltip title="account" placement="bottom-start" style={{marginLeft: 10}}>
+                            <Link to={`/db/users/${decode.id}`}>
+                                <Avatar alt="Remy Sharp" src={`${config.url}/${user.user.profile_picture}`} className={classes.img}/>
+                            </Link>
+                        </Tooltip>
+                    </Box>
+                    }
                 </Toolbar>
             </AppBar>
         </div>

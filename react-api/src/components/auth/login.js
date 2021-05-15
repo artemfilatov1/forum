@@ -6,12 +6,11 @@ import {sendLogin} from "../../redux/modules/auth";
 import * as rr from "react-redux";
 import * as rd from "react-router-dom";
 import * as r from "react";
-import {sendClearError} from "../../redux/modules/auth";
 
 function login() {
     const classes = UseStyles();
-    const dispatch = rr.useDispatch()
-    const user = rr.useSelector(state => state.auth)
+    const dispatch = rr.useDispatch();
+    const user = rr.useSelector(state => state.auth);
 
     const [login, setLogin] = r.useState('');
     const [password, setPassword] = r.useState('');
@@ -20,15 +19,14 @@ function login() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const User = {login, password};
-        dispatch(sendLogin(User, history));
+        if (user.status === 'idle'){
+            dispatch(sendLogin(User));
+        }
+        if(!user.error) history.push('/');
     };
 
     const onChangeLogin = (e) => setLogin(e.target.value);
     const onChangePassword = (e) => setPassword(e.target.value);
-
-    r.useEffect(() => {
-        dispatch(sendClearError());
-    },[])
 
     return (
         <div className={classes.main}>

@@ -10,21 +10,24 @@ function users() {
     const users = rr.useSelector(state => state.users);
     const dispatch = rr.useDispatch();
     r.useEffect(() => {
-        dispatch(sendGetAllUsers())
-    },[])
+        if (users.status === 'idle'){
+            dispatch(sendGetAllUsers())
+        }
+    },[dispatch])
 
     console.log(users);
 
     return (
-        <div>
+        <div style={{width: '100%'}}>
             <h1>Users</h1>
             {users.users &&
-                <Box display='flex' style={{flexWrap: 'wrap', margin: 'auto'}}>
+                <Box display='flex' style={{flexWrap: 'wrap'}}>
                     {users.users.map(i => (
-                        <div key={i.id}>
-                            {CustomCard(i.login, i.email, `/db/users/${i.id}`,
-                                `${config.url}/${i.profile_picture}`,
-                                '240px')}
+                        <div key={i.id} >
+                            <CustomCard title={i.login} content={i.email}
+                                to={`/db/users/${i.id}`}
+                                image={`${config.url}/${i.profile_picture}`}
+                                width={'240px'}/>
                         </div>
                     ))}
                 </Box>

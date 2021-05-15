@@ -4,11 +4,15 @@ import CardActionArea from '@material-ui/core/CardActionArea';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
-import Button from '@material-ui/core/Button';
+import {Button, ButtonBase} from '@material-ui/core/';
+import Avatar from '@material-ui/core/Avatar';
+import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import {Link} from "react-router-dom";
 import * as rd from "react-router-dom";
+import config from "../../config";
+import { Divider } from "@material-ui/core";
 
 const UseStyles = makeStyles({
     root: {
@@ -30,37 +34,51 @@ const UseStyles = makeStyles({
     }
 });
 
-export const CustomCard = (title, content, to, image, width, height) => {
+export const CustomCard = (props) => {
     const classes = UseStyles();
     const history = rd.useHistory();
     const click = () => {
-        history.push(to)
+        history.push(props.to)
+    }
+    const click2 = () => {
+        history.push(`/db/users/${props.userId}`);
     }
     return (
-        <Card className={classes.root} style={{width: width, height: height}}>
+        <Card className={classes.root} style={{width: props.width, height: props.height}}>
             <CardActionArea>
-                <Link className={classes.link} to={to}>
-                    {image &&
+                <Link className={classes.link} to={props.to}>
+                    {props.image &&
                         <CardMedia
                             className={classes.media}
-                            image={image}
+                            image={props.image}
                             title="Contemplative Reptile"
                         />
                     }
                     <CardContent>
                         <Typography className={classes.text} gutterBottom variant="h5" component="h2">
-                            {title}
+                            {props.title}
                         </Typography>
                         <Typography className={classes.text} variant="body2" color="textSecondary" component="p">
-                            {content}
+                            {props.content}
                         </Typography>
                     </CardContent>
                 </Link>
             </CardActionArea>
             <CardActions>
-                <Button size="small" color="primary" onClick={click}>
-                    Learn More
-                </Button>
+                <Box display='flex' style={{width: '100%'}}>
+                    <Box style={{flex:1, textAlign:'left'}}>
+                        <Button size="small" color="primary" onClick={click} >
+                            Learn More
+                        </Button>
+                    </Box>
+                    {props.author && props.userId &&
+                    <Box style={{flex:1, textAlign:'right'}}>
+                        <ButtonBase onClick={click2} style={{borderRadius:'100%', padding:10}}>
+                            <Avatar alt="Remy Sharp" src={`${config.url}/${props.author}`} style={{width: 30, height:30}}/>
+                        </ButtonBase>
+                    </Box>
+                    }
+                </Box>
             </CardActions>
         </Card>
     );

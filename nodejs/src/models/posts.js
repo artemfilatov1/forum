@@ -27,7 +27,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.TEXT,
       allowNull: false
     },
-    publish_data: {
+    publish_date: {
       type: DataTypes.DATE,
       allowNull: false
     },

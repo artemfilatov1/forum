@@ -15,7 +15,7 @@ module.exports.fakePosts = async (n) => {
         const random_userId = faker.random.arrayElement(ids);
         await db.Posts.create({
             title: random_title,
-            publish_data: random_publish_date,
+            publish_date: random_publish_date,
             status: random_status,
             content: random_content,
             userId: random_userId
