@@ -3,8 +3,8 @@ import * as rr from "react-redux";
 import {Route, Redirect} from "react-router-dom";
 
 export function RouteClient({ component: Component, ...rest }) {
-    const user = rr.useSelector(state => state.auth);
-    if (user.token){
+    const users = rr.useSelector(state => state.users);
+    if (users.token){
         return (
             <Route
               {...rest}
@@ -18,8 +18,8 @@ export function RouteClient({ component: Component, ...rest }) {
   }
 
   export function RouteGuest({ component: Component, ...rest }) {
-    const user = rr.useSelector(state => state.auth);
-    if (!user.token){
+    const users = rr.useSelector(state => state.users);
+    if (!users.token){
         return (
             <Route
               {...rest}

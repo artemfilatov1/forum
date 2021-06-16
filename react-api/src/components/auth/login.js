@@ -1,8 +1,8 @@
 import React from "react";
 import {Button, TextField} from "@material-ui/core";
-import {Alert, AlertTitle} from "@material-ui/lab";
+import {Alert} from "@material-ui/lab";
 import {UseStyles} from "../../styles/login";
-import {sendLogin} from "../../redux/modules/auth";
+import {sendLogin, clearError} from "../../redux/modules/users";
 import * as rr from "react-redux";
 import * as rd from "react-router-dom";
 import * as r from "react";
@@ -10,19 +10,22 @@ import * as r from "react";
 function login() {
     const classes = UseStyles();
     const dispatch = rr.useDispatch();
-    const user = rr.useSelector(state => state.auth);
+    const users = rr.useSelector(state => state.users);
 
     const [login, setLogin] = r.useState('');
     const [password, setPassword] = r.useState('');
     const history = rd.useHistory();
 
+    r.useEffect(() => {
+        dispatch(clearError());
+    }, [dispatch])
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         const User = {login, password};
-        if (user.status === 'idle'){
-            dispatch(sendLogin(User));
+        if (users.status === 'idle'){
+            dispatch(sendLogin({user: User, history: history}));
         }
-        if(!user.error) history.push('/');
     };
 
     const onChangeLogin = (e) => setLogin(e.target.value);
@@ -32,10 +35,10 @@ function login() {
         <div className={classes.main}>
             <h2>Sing in</h2>
             <form onSubmit={handleSubmit}>
-                {user.error && 
+                {users.error &&
                     <Alert className={classes.error} severity="error">
                         {/* <AlertTitle>Error</AlertTitle> */}
-                        {user.error}
+                        {users.error}
                     </Alert>
                 }
 

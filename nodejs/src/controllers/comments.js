@@ -17,12 +17,16 @@ module.exports.getCommentById = async (ctx) => {
 module.exports.getAllLikesFormComment = async (ctx) => {
     try {
         const comments = ctx.db.Comments;
-        const likes = ctx.db.LikesToComments;
         const {id} = ctx.params;
         const comment = await comments.findByPk(id, {
-            include: likes,
+            include: ctx.db.LikesToComments,
         });
-        ctx.body = comment.LikesToComments;
+        let likes = [], dislikes = [];
+        for (let i = 0; i < comment.LikesToComments.length; i++){
+            if (comment.LikesToComments[i].type === 'like') likes.push(comment.LikesToComments[i]);
+            else dislikes.push(comment.LikesToComments[i]);
+        }
+        ctx.body = {likes: likes, dislikes: dislikes};
         ctx.status = 200;
     } catch (err){
         ctx.body = {error: err.message};
@@ -37,20 +41,25 @@ module.exports.newLike = async (ctx) => {
         const token = getToken(ctx);
         const decode = await jwt.verify(token, config.token.accessToken);
         const comment = await comments.findByPk(ctx.params.id);
+        const body = ctx.request.body;
+
         const prevLike = await likes.findOne({where: {
                 userId: decode.id, commentId: comment.id
             }});
         if (prevLike !== null) {
+            await module.exports.deleteLikeFromComment(ctx);
+            if (prevLike.type !== body.type){
+                await module.exports.newLike(ctx);
+            }
             return;
         }
-        const like = await likes.create({
+        await likes.create({
             publish_date: new Date(),
-            type: 'like',
+            type: body.type,
             userId: decode.id,
             commentId: comment.id
         });
-        ctx.body = like;
-        ctx.status = 200;
+        await module.exports.getAllLikesFormComment(ctx);
     } catch (err){
         ctx.body = {error: err.message};
         ctx.status = 400;

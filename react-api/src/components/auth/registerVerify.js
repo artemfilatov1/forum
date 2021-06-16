@@ -1,5 +1,5 @@
-import React, {useEffect} from "react";
-import {sendVerifyEmail} from "../../redux/modules/auth";
+import React from "react";
+import {sendVerifyEmail} from "../../redux/modules/users";
 import * as rr from "react-redux";
 import * as rd from "react-router-dom";
 import {Redirect} from "react-router-dom";
@@ -7,11 +7,11 @@ import * as r from "react";
 
 function verify() {
     const dispatch = rr.useDispatch();
-    const user = rr.useSelector(state => state.auth);
+    const users = rr.useSelector(state => state.users);
     const { token } = rd.useParams();
 
     r.useEffect(() => {
-        if (user.status === 'idle'){
+        if (users.status === 'idle'){
             dispatch(sendVerifyEmail(token))
         }
     },[dispatch])
@@ -21,16 +21,11 @@ function verify() {
             <h2>Verify account</h2>
         </div>
     );
-    const fali = (
-        <div>
-            <h2>Fail verify account</h2>
-        </div>
-    );
 
     return (
         <div>
-            {user.error && <Redirect to="/404" />}
-            {!user.error && ok}
+            {users.error && <Redirect to="/404" />}
+            {!users.error && ok}
         </div>
     )
 }

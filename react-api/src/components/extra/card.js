@@ -36,13 +36,6 @@ const UseStyles = makeStyles({
 
 export const CustomCard = (props) => {
     const classes = UseStyles();
-    const history = rd.useHistory();
-    const click = () => {
-        history.push(props.to)
-    }
-    const click2 = () => {
-        history.push(`/db/users/${props.userId}`);
-    }
     return (
         <Card className={classes.root} style={{width: props.width, height: props.height}}>
             <CardActionArea>
@@ -67,13 +60,13 @@ export const CustomCard = (props) => {
             <CardActions>
                 <Box display='flex' style={{width: '100%'}}>
                     <Box style={{flex:1, textAlign:'left'}}>
-                        <Button size="small" color="primary" onClick={click} >
+                        <Button size="small" color="primary" href={props.to} >
                             Learn More
                         </Button>
                     </Box>
                     {props.author && props.userId &&
                     <Box style={{flex:1, textAlign:'right'}}>
-                        <ButtonBase onClick={click2} style={{borderRadius:'100%', padding:10}}>
+                        <ButtonBase href={`/db/users/${props.userId}`} style={{borderRadius:'100%', padding:10}}>
                             <Avatar alt="Remy Sharp" src={`${config.url}/${props.author}`} style={{width: 30, height:30}}/>
                         </ButtonBase>
                     </Box>

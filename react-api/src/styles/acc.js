@@ -6,7 +6,7 @@ export const UseStyles = makeStyles({
         minWidth: '400px',
         margin: 'auto',
         marginTop: 40,
-        border: '1px solid gray',
+        // border: '1px solid gray',
         borderRadius: 4,
         paddingLeft: 10,
         paddingRight: 10,
@@ -17,6 +17,11 @@ export const UseStyles = makeStyles({
         textTransform: 'none',
         marginBottom: '10px',
         display: 'flex'
+    },
+    baseAvatar: {
+        // width: '100%',
+        borderRadius: '100px',
+        marginBottom: '30px',
     },
     type: {
         flex: 1,
@@ -29,6 +34,8 @@ export const UseStyles = makeStyles({
         font: '1.2em "Fira Sans", sans-serif',
     },
     img: {
+        width: '200px',
+        height: '200px',
         boxShadow: '0 0 0 0px black, 0 0 4px #333',
     }
 });

@@ -1,7 +1,7 @@
 import React from "react";
-import {Box, Button} from '@material-ui/core';
+import {Box} from '@material-ui/core';
 import { sendGetAllPosts } from '../../redux/modules/posts'
-import { sendGetAllUsers, selectUserById} from '../../redux/modules/users'
+import { sendGetAllUsers} from '../../redux/modules/users'
 import * as rr from "react-redux";
 import * as r from "react";
 import {CustomCard} from '../extra/card'
@@ -15,7 +15,6 @@ function posts() {
     r.useEffect(() => {
         if (posts.status === 'idle'){
             dispatch(sendGetAllPosts());
-            console.log(1);
         }
     }, [dispatch])
 

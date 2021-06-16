@@ -89,7 +89,12 @@ module.exports.getAllLikesFromPost = async (ctx) => {
             where: {id : id},
             include: ctx.db.LikesToPosts,
         });
-        ctx.body = post.LikesToPosts;
+        let likes = [], dislikes = [];
+        for (let i = 0; i < post.LikesToPosts.length; i++){
+            if (post.LikesToPosts[i].type === 'like') likes.push(post.LikesToPosts[i]);
+            else dislikes.push(post.LikesToPosts[i]);
+        }
+        ctx.body = {likes: likes, dislikes: dislikes};
         ctx.status = 200;
     } catch (err){
         ctx.body = {error: err.message};
@@ -130,18 +135,22 @@ module.exports.newLike = async (ctx) => {
         const prevLike = await likes.findOne({where: {
             userId: decode.id, postId: post.id
         }});
+        const body = ctx.request.body;
+
         if (prevLike !== null) {
             await module.exports.deleteLikeFromPost(ctx);
+            if (prevLike.type !== body.type){
+                await module.exports.newLike(ctx);
+            }
             return;
         }
-        const like = await likes.create({
+        await likes.create({
             publish_date: new Date(),
-            type: 'like',
+            type: body.type,
             userId: decode.id,
             postId: post.id
         });
-        ctx.body = like;
-        ctx.status = 200;
+        await module.exports.getAllLikesFromPost(ctx);
     } catch (err){
         ctx.body = {error: err.message};
         ctx.status = 400;
@@ -192,8 +201,7 @@ module.exports.deleteLikeFromPost = async (ctx) => {
                 userId: decode.id
             },
         });
-        ctx.body = {message: 'deleted like from post'};
-        ctx.status = 200;
+        await module.exports.getAllLikesFromPost(ctx);
     } catch (err){
         ctx.body = {error: err.message};
         ctx.status = 400;

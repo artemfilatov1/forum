@@ -62,11 +62,31 @@ module.exports.updateUser = async (ctx) => {
     try {
         const users = ctx.db.Users;
         const user = ctx.request.body;
-        user.password = await argon2.hash(user.password);
+        console.log({user})
         const {user_id} = await ctx.params;
         const one = await users.findOne({ where: { id: user_id } })
-        await one.update(user);
-        ctx.body = { msg: 'update user successfully!' };
+        let update = null;
+        if (user.login){
+            const login = await users.findOne({ where: { login: user.login } });
+            if (login !== null) throw new Error('login is busy');
+            update = await one.update({login: user.login});
+        }
+        if (user.full_name){
+            update = await one.update({full_name: user.full_name});
+        }
+        if (user.password){
+            user.password = await argon2.hash(user.password);
+            update = await one.update({password: user.password});
+        }
+        if (user.email){
+            const email = await users.findOne({ where: { email: user.email } });
+            if (email !== null) throw new Error('email is busy');
+            update = await one.update({email: user.email});
+        }
+        if (user.role){
+            update = await one.update({role: user.role});
+        }
+        ctx.body = update;
     } catch (err) {
         ctx.body = { error: err.message };
         ctx.status = 400;

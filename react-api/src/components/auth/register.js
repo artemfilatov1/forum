@@ -2,7 +2,7 @@ import React from "react";
 import {Button, TextField} from "@material-ui/core";
 import {Alert, AlertTitle} from "@material-ui/lab";
 import {UseStyles} from "../../styles/login";
-import {sendRegister} from "../../redux/modules/auth";
+import {clearError, sendRegister} from "../../redux/modules/users";
 import * as rr from "react-redux";
 import * as rd from "react-router-dom";
 import * as r from "react";
@@ -10,7 +10,7 @@ import * as r from "react";
 function register() {
     const classes = UseStyles();
     const dispatch = rr.useDispatch();
-    const user = rr.useSelector(state => state.auth);
+    const users = rr.useSelector(state => state.users);
 
     const [full_name, setFullName] = r.useState('');
     const [login, setLogin] = r.useState('');
@@ -19,12 +19,15 @@ function register() {
     const [password_confirmation, setPasswordConfirmation] = r.useState('');
     const history = rd.useHistory();
 
+    r.useEffect(() => {
+        dispatch(clearError());
+    }, [dispatch])
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         const User = { full_name, login, email, password, password_confirmation };
-        if (user.status === 'idle'){
-            dispatch(sendRegister(User));
-            history.push('/login');
+        if (users.status === 'idle'){
+            dispatch(sendRegister({user: User, history: history}));
         }
     }
 
@@ -38,10 +41,10 @@ function register() {
         <div className={classes.main}>
             <h2>Register</h2>
             <form onSubmit={handleSubmit}>
-                {user.error && 
+                {users.error &&
                     <Alert className={classes.error} severity="error">
                         <AlertTitle>Error</AlertTitle>
-                        {user.error}
+                        {users.error}
                     </Alert>
                 }
                 <TextField onChange={onChangeLogin} className={classes.input} required label='login'/>

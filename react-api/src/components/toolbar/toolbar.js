@@ -13,12 +13,11 @@ import Fab from '@material-ui/core/Fab';
 import Tooltip from '@material-ui/core/Tooltip';
 import {parseToken} from '../../utils/parseToken';
 
-
 function toolbar() {
     const classes = UseStyles();
-    const user = rr.useSelector(state => state.auth);
+    const users = rr.useSelector(state => state.users);
     const history = rd.useHistory();
-    let decode = parseToken(user.token);
+    let decode = parseToken(users.token);
 
     const register = () => {
         history.push('/register');
@@ -44,7 +43,7 @@ function toolbar() {
                             inputProps={{ 'aria-label': 'search' }}
                         />
                     </div>
-                    {!user.token &&
+                    {!users.token &&
                     <div>
                         <Link className={classes.a} to="/login">SING IN</Link>
                         <Button className={classes.button}
@@ -52,16 +51,18 @@ function toolbar() {
                                 variant='contained' color='primary'>REGISTER</Button>
                     </div>
                     }
-                    {user.token && decode && user.user &&
+                    {users.token && decode && users.user &&
                     <Box display='flex'>
                         <Tooltip title="Add post" aria-label="add">
-                            <Fab color="primary" size="small">
-                                <AddIcon />
-                            </Fab>
+                            <Link to={'/createpost'}>
+                                <Fab color="primary" size="small">
+                                    <AddIcon />
+                                </Fab>
+                            </Link>
                         </Tooltip>
                         <Tooltip title="account" placement="bottom-start" style={{marginLeft: 10}}>
                             <Link to={`/db/users/${decode.id}`}>
-                                <Avatar alt="Remy Sharp" src={`${config.url}/${user.user.profile_picture}`} className={classes.img}/>
+                                <Avatar alt="Remy Sharp" src={`${config.url}/${users.user.profile_picture}`} className={classes.img}/>
                             </Link>
                         </Tooltip>
                     </Box>
