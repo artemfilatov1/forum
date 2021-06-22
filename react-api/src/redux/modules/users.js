@@ -32,7 +32,6 @@ export const sendDeleteUser = createAsyncThunk(
     async (id) => {
         try {
             await axios.delete(`${config.url}/api/users/${id}`);
-            return;
         } catch (err) {
 
         }
@@ -57,7 +56,8 @@ export const sendUpdate = createAsyncThunk(
     async (param, thunkAPI) => {
         try {
             const res = await axios.patch(`${config.url}/api/users/${param.id}`, param.user);
-            param.history.push(`/db/users/${param.id}`);
+            console.log(res.data)
+            param.history.push(`/users/${param.id}`);
             return {error: null, user: res.data};
         } catch (err) {
             console.log(err.response.data.error);

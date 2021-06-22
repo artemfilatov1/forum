@@ -34,14 +34,19 @@ module.exports.getAllLikesFormComment = async (ctx) => {
     }
 }
 
-module.exports.newLike = async (ctx) => {
+module.exports.newLike = async (ctx) => {//TODO rating
     try {
+        const posts = ctx.db.Posts;
+        const users = ctx.db.Users;
         const comments = ctx.db.Comments;
         const likes = ctx.db.LikesToComments;
         const token = getToken(ctx);
         const decode = await jwt.verify(token, config.token.accessToken);
         const comment = await comments.findByPk(ctx.params.id);
         const body = ctx.request.body;
+
+        const post = await posts.findByPk(comment.postId);
+        const one = await users.findOne({ where: { id: post.userId } })
 
         const prevLike = await likes.findOne({where: {
                 userId: decode.id, commentId: comment.id
@@ -50,9 +55,18 @@ module.exports.newLike = async (ctx) => {
             await module.exports.deleteLikeFromComment(ctx);
             if (prevLike.type !== body.type){
                 await module.exports.newLike(ctx);
+                if (body.type === 'like') await one.update({rating: one.rating+2});
+                else await one.update({rating: one.rating-2});
+            } else {
+                if (body.type === 'like') await one.update({rating: one.rating-1});
+                else await one.update({rating: one.rating+1});
             }
             return;
+        } else {
+            if (body.type === 'like') await one.update({rating: one.rating+1});
+            else await one.update({rating: one.rating-1});
         }
+
         await likes.create({
             publish_date: new Date(),
             type: body.type,

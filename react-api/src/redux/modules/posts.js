@@ -2,7 +2,6 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from "axios";
 import config from "../../config";
 import {convertDate} from "../../utils/date";
-import comment from "../../components/db/comment";
 
 export const sendGetAllPosts = createAsyncThunk(
     'posts/sendGetAllPosts',
@@ -10,9 +9,22 @@ export const sendGetAllPosts = createAsyncThunk(
         try {
             const res = await axios.get(`${config.url}/api/posts`);
             convertDate(res.data);
-            return res.data;
+            let posts = []
+            for (let i = 0; i < res.data.length; i++){
+                const id = res.data[i].id;
+                const post = res.data[i];
+                const resL = await axios.get(`${config.url}/api/posts/${id}/like`);
+                const comments = await axios.get(`${config.url}/api/posts/${id}/comments`);
+                let obj = {
+                    post: post,
+                    votes: resL.data.likes.length-resL.data.dislikes.length,
+                    answers: comments.data.length,
+                }
+                posts.push(obj)
+            }
+            return posts;
         } catch (err) {
-
+            return {error: err.response.data.error};
         }
     }
 )
@@ -23,7 +35,19 @@ export const sendDeletePost = createAsyncThunk(
         try {
             await axios.delete(`${config.url}/api/posts/${id}`);
         } catch (err) {
+            return {error: err.response.data.error};
+        }
+    }
+)
 
+export const sendDeleteComment = createAsyncThunk(
+    'posts/sendDeleteComment',
+    async (id, thunkAPI) => {
+        try {
+            await axios.delete(`${config.url}/api/comments/${id}`);
+            return {id: id};
+        } catch (err) {
+            return {error: err.response.data.error};
         }
     }
 )
@@ -44,7 +68,7 @@ export const sendSetLike = createAsyncThunk(
             }
             return {likes: res.data.likes, dislikes: res.data.dislikes, isLiked: isLiked, isDisliked: isDisliked};
         } catch (err) {
-
+            return {error: err.response.data.error};
         }
     }
 );
@@ -88,7 +112,7 @@ export const sendSetLikeToComment = createAsyncThunk(
             }
             return comments;
         } catch (err) {
-
+            return {error: err.response.data.error};
         }
     }
 );
@@ -152,14 +176,62 @@ export const sendGetPostById = createAsyncThunk(
                 dislikes: postLikes.data.dislikes,
             };
         } catch (err) {
-
+            return {error: err.response.data.error};
         }
     }
 );
 
+export const sendCreatePost = createAsyncThunk(
+    'posts/sendCreatePost',
+    async (param, thunkAPI) => {
+        try {
+            let header = { headers: { Authorization: `Bearer ${param.token}` }}
+            const res = await axios.post(`${config.url}/api/posts/`, param.user, header);
+            param.history.push(`/posts/${res.data.id}`)
+            return {error: null};
+        } catch (err) {
+            return {error: err.response.data.error};
+        }
+    }
+)
+
+export const sendGetAllCategoriesFromPost = createAsyncThunk(
+    'posts/sendGetAllCategoriesFromPost',
+    async (id, thunkAPI) => {
+        try {
+            const res = await axios.get(`${config.url}/api/posts/${id}/categories`);
+            return res.data;
+        } catch (err) {
+            return {error: err.response.data.error};
+        }
+    }
+)
+
+export const sendCreateComment = createAsyncThunk(
+    'posts/sendCreateComment',
+    async (param, thunkAPI) => {
+        try {
+            let header = { headers: { Authorization: `Bearer ${param.token}` }}
+            const res = await axios.post(`${config.url}/api/posts/${param.id}/comments`, param.user, header);
+            convertDate(res.data);
+            const obj = {
+                comment: res.data,
+                likes: [],
+                dislikes: [],
+                isLiked: false,
+                isDisliked: false,
+            }
+            return {comment: obj, error: null};
+        } catch (err) {
+            return {error: err.response.data.error};
+        }
+    }
+)
+
 const initialState = {
     posts: [],
     specPost: null,
+    categories: [],
     comments: [],
     likes: [],
     dislikes: [],
@@ -182,13 +254,33 @@ const slice = createSlice({
             state.isLiked = action.payload.isLiked;
             state.isDisliked = action.payload.isDisliked;
         },
-        [sendGetAllPosts.fulfilled]: (state, action) => {
-            state.specPost = null;
-            state.posts = action.payload;
+        [sendCreatePost.fulfilled]: (state, action) => {
+            state.error = action.payload.error
+        },
+        [sendDeleteComment.fulfilled]: (state, action) => {
+            const tmp = [];
+            state.comments.map(i=>{
+                if (i.comment.id !== action.payload.id){
+                    tmp.push(i);
+                }
+            });
+            state.comments = tmp;
         },
         [sendDeletePost.fulfilled]: (state, action) => {
             state.specPost = null;
             state.posts = null;
+        },
+        [sendGetAllPosts.fulfilled]: (state, action) => {
+            state.posts = action.payload;
+            state.specPost = null;
+            state.comments = [];
+            state.likes = [];
+            state.dislikes = []
+            state.isLiked = false;
+            state.isDisliked = false;
+        },
+        [sendSetLikeToComment.fulfilled]: (state, action) => {
+            state.comments = action.payload;
         },
         [sendSetLike.fulfilled]: (state, action) => {
             state.likes = action.payload.likes;
@@ -198,6 +290,13 @@ const slice = createSlice({
         },
         [sendSetLikeToComment.fulfilled]: (state, action) => {
             state.comments = action.payload;
+        },
+        [sendGetAllCategoriesFromPost.fulfilled]: (state, action) => {
+            state.categories = action.payload;
+        },
+        [sendCreateComment.fulfilled]: (state, action) => {
+            state.comments.push(action.payload.comment);
+            state.error = action.payload.error;
         },
     }
 })

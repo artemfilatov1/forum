@@ -61,7 +61,7 @@ function toolbar() {
                             </Link>
                         </Tooltip>
                         <Tooltip title="account" placement="bottom-start" style={{marginLeft: 10}}>
-                            <Link to={`/db/users/${decode.id}`}>
+                            <Link to={`/users/${decode.id}`}>
                                 <Avatar alt="Remy Sharp" src={`${config.url}/${users.user.profile_picture}`} className={classes.img}/>
                             </Link>
                         </Tooltip>

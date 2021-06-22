@@ -1,16 +1,18 @@
 import React from "react";
 import * as rr from "react-redux";
 import * as rd from "react-router-dom";
-import {Avatar, ButtonBase, Box} from '@material-ui/core';
+import {Avatar, ButtonBase, Box, Button} from '@material-ui/core';
 import config from '../../config';
 import ThumbUpOutlinedIcon from '@material-ui/icons/ThumbUpOutlined';
 import ThumbDownOutlinedIcon from '@material-ui/icons/ThumbDownOutlined';
 import {UseStyles} from '../../styles/specP';
 import {parseToken} from '../../utils/parseToken';
-import {sendSetLikeToComment} from '../../redux/modules/posts';
+import {sendDeleteComment, sendSetLikeToComment, sendGetPostById} from '../../redux/modules/posts';
+import DeleteIcon from "@material-ui/icons/Delete";
 
 function comment(props) {
     const users = rr.useSelector(state => state.users);
+    const posts = rr.useSelector(state => state.posts);
     const dispatch = rr.useDispatch();
     const classes = UseStyles();
     const id = parseInt(rd.useParams().id);
@@ -24,7 +26,14 @@ function comment(props) {
     
     const handleSetLike = () => {
         if (!decode) return;
-        const param = {id: props.id, postId: id, token: users.token, type: 'like', decode: decode}
+        console.log(posts.comments)
+        const param = {id: props.id,
+            postId: id,
+            token: users.token,
+            type: 'like',
+            decode: decode,
+            comments: posts.comments
+        }
         dispatch(sendSetLikeToComment(param));
         isDisliked = null; isLiked = null;
         if(props.isLiked) isLiked = classes.clicked;
@@ -33,11 +42,21 @@ function comment(props) {
 
     const handleSetDislike = (type) => {
         if (!decode) return;
-        const param = {id: props.id, token: users.token, postId: id, type: 'dislike', decode: decode}
+        const param = {id: props.id,
+            token: users.token,
+            postId: id,
+            type: 'dislike',
+            decode: decode,
+            comments: posts.comments
+        }
         dispatch(sendSetLikeToComment(param));
         isLiked = null; isDisliked = null;
         if(props.isLiked) isLiked = classes.clicked;
         if(props.isDisliked) isDisliked = classes.clicked;
+    }
+
+    const handleDelete = () => {
+        dispatch(sendDeleteComment(props.id));
     }
 
     return (
@@ -45,7 +64,7 @@ function comment(props) {
             <div className={classes.title}>
                 <div className={classes.underTitle}>
                     <p className={classes.underP}>publish date: {props.publish_date}</p>
-                    <ButtonBase href={`/db/users/${props.id}`} style={{borderRadius:'100%', padding:5}}>
+                    <ButtonBase href={`/users/${props.id}`} style={{borderRadius:'100%', padding:5}}>
                         <Avatar alt="Remy Sharp" src={`${config.url}/${props.map.get(props.userId)}`} className={classes.img}/>
                     </ButtonBase>
                 </div>
@@ -70,6 +89,12 @@ function comment(props) {
                         <ThumbDownOutlinedIcon/>
                     </ButtonBase>
                 </div>
+                {users.user && (users.user.role === 'admin' || props.userId === users.user.id) &&
+                <Button onClick={handleDelete} style={{fontSize:12}} variant='outlined' color='secondary'>
+                    <DeleteIcon fontSize='small'/>
+                    delete
+                </Button>
+                }
             </Box>
         </div>
     )

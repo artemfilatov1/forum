@@ -10,9 +10,7 @@ import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import {Link} from "react-router-dom";
-import * as rd from "react-router-dom";
 import config from "../../config";
-import { Divider } from "@material-ui/core";
 
 const UseStyles = makeStyles({
     root: {
@@ -31,11 +29,30 @@ const UseStyles = makeStyles({
         whiteSpace: 'nowrap',
         overflow: 'hidden',
         textOverflow: 'ellipsis',
+    },
+    right: {
+        display: 'flex',
+        flex:1,
+        textAlign:'left',
+        "& > *": {
+            marginRight: 15,
+        }
     }
 });
 
 export const CustomCard = (props) => {
     const classes = UseStyles();
+    let a = props.answers, v = props.votes;
+    if (a === 0) a = 'no answers';
+    else if (a > 1) a = `${props.answers} answers`
+    else if (a === 1) a = `${props.answers} answer`
+    else a = null
+
+    if (v === 0) v = 'no votes';
+    else if (v > 1 || v < -1) v = `${props.votes} votes`
+    else if (v === 1 || v === -1) v = `${props.votes} vote`
+    else v = null
+
     return (
         <Card className={classes.root} style={{width: props.width, height: props.height}}>
             <CardActionArea>
@@ -59,14 +76,20 @@ export const CustomCard = (props) => {
             </CardActionArea>
             <CardActions>
                 <Box display='flex' style={{width: '100%'}}>
-                    <Box style={{flex:1, textAlign:'left'}}>
+                    <Box className={classes.right}>
                         <Button size="small" color="primary" href={props.to} >
                             Learn More
                         </Button>
+                        {a &&
+                        <p>{a}</p>
+                        }
+                        {v &&
+                        <p>{v}</p>
+                        }
                     </Box>
                     {props.author && props.userId &&
                     <Box style={{flex:1, textAlign:'right'}}>
-                        <ButtonBase href={`/db/users/${props.userId}`} style={{borderRadius:'100%', padding:10}}>
+                        <ButtonBase href={`/users/${props.userId}`} style={{borderRadius:'100%', padding:10}}>
                             <Avatar alt="Remy Sharp" src={`${config.url}/${props.author}`} style={{width: 30, height:30}}/>
                         </ButtonBase>
                     </Box>

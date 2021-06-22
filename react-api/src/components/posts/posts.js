@@ -31,14 +31,19 @@ function posts() {
     return ( 
         <Box>
             <h1>Posts</h1>
-            {posts.posts && map.size>0 &&
+            {posts.posts.length !== 0 && map.size>0 &&
                 <Box>
                     {posts.posts.map(i => (
-                        <div key={i.id}>
-                            <CustomCard title={i.title} content={i.content}
-                                to={`/db/posts/${i.id}`}
-                                author={map.get(i.userId)}
-                                userId={i.userId}/>
+                        <div key={i.post.id}>
+                            <CustomCard
+                                title={i.post.title}
+                                content={i.post.content}
+                                to={`/posts/${i.post.id}`}
+                                author={map.get(i.post.userId)}
+                                userId={i.post.userId}
+                                votes={i.votes}
+                                answers={i.answers}
+                            />
                         </div>
                     ))}
                 </Box>

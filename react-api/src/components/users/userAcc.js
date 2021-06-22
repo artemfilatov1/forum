@@ -46,7 +46,7 @@ function account() {
             dispatch(logOut());
             history.push('/login');
         } else {
-            history.push('/db/users');
+            history.push('/users');
         }
     }
 
@@ -60,6 +60,11 @@ function account() {
         }
     }
 
+    const handleName = () => {if (clientId === id) history.push('/name')}
+    const handleEmail = () => {if (clientId === id) history.push('/email')}
+    const handleFullName = () => {if (clientId === id) history.push('/fullname')}
+    const handlePassword = () => {if (clientId === id) history.push('/password')}
+
     return (
         <div>
             {users.specUser &&
@@ -68,7 +73,7 @@ function account() {
                 <ButtonBase className={classes.baseAvatar} variant='outlined' onClick={handleClickOpenAvatar}>
                     <Avatar alt="Remy Sharp" src={`${config.url}/${users.specUser.profile_picture}`} className={classes.img}/>
                 </ButtonBase>
-                <Button className={classes.base} href={'/name'} variant='outlined'>
+                <Button className={classes.base} onClick={handleName} variant='outlined'>
                     <div className={classes.type}>Login</div>
                     <div className={classes.value}>{users.specUser.login}</div>
                 </Button>
@@ -76,16 +81,16 @@ function account() {
                     <div className={classes.type}>rating</div>
                     <div className={classes.value}>{users.specUser.rating}</div>
                 </Button>
-                <Button className={classes.base} href={'/fullname'} variant='outlined'>
+                <Button className={classes.base} onClick={handleFullName} variant='outlined'>
                     <div className={classes.type}>Full name</div>
                     <div className={classes.value}>{users.specUser.full_name}</div>
                 </Button>
-                <Button className={classes.base} href={'/email'} variant='outlined'>
+                <Button className={classes.base} onClick={handleEmail} variant='outlined'>
                     <div className={classes.type}>email</div>
                     <div className={classes.value}>{users.specUser.email}</div>
                 </Button>
                 {(clientId === id) &&
-                <Button className={classes.base} href={'/password'} variant='outlined'>
+                <Button className={classes.base} onClick={handlePassword} variant='outlined'>
                     <div className={classes.type}>password</div>
                     <div className={classes.value}>********</div>
                 </Button>

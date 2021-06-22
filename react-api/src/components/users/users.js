@@ -15,8 +15,6 @@ function users() {
         }
     },[dispatch])
 
-    console.log(users);
-
     return (
         <div style={{width: '100%'}}>
             <h1>Users</h1>
@@ -25,7 +23,7 @@ function users() {
                     {users.users.map(i => (
                         <div key={i.id} >
                             <CustomCard title={i.login} content={i.email}
-                                to={`/db/users/${i.id}`}
+                                to={`/users/${i.id}`}
                                 image={`${config.url}/${i.profile_picture}`}
                                 width={'240px'}/>
                         </div>

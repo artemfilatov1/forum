@@ -1,5 +1,6 @@
 import users from "./users";
 import posts from "./posts";
+import categories from "./categories";
 import {combineReducers} from "redux";
 
 // export default {
@@ -10,4 +11,5 @@ import {combineReducers} from "redux";
 export default combineReducers({
     users: users,
     posts: posts,
+    categories: categories,
 })

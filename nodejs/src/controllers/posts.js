@@ -44,20 +44,19 @@ module.exports.getAllCommentsFormPost = async (ctx) => {
 
 module.exports.newComment = async (ctx) => {
     try {
-        const posts = ctx.db.Posts;
         const comments = ctx.db.Comments;
         const {id} = ctx.params;
         const token = getToken(ctx);
         const decode = await jwt.verify(token, config.token.accessToken);
         const body = ctx.request.body;
-        const post = await posts.findOne({ where: { id: id } });
-        await comments.create({
+
+        const comment = await comments.create({
             publish_date: new Date(),
             content: body.content,
             userId: decode.id,
             postId: id
         })
-        ctx.body = post;
+        ctx.body = comment;
         ctx.status = 200;
     } catch (err){
         ctx.body = {error: err.message};
@@ -115,8 +114,11 @@ module.exports.newPost = async (ctx) => {
             content: body.content,
             userId: decode.id
         });
-        const category = await ctx.db.Categories.findOne({where: {id: body.categories}});
-        await post.addCategories(category);
+        body.categories.map(async i => {
+            const category = await ctx.db.Categories.findOne({where: {id: i.id}});
+            await post.addCategories(category);
+        })
+
         ctx.body = post;
         ctx.status = 200;
     } catch (err){
@@ -125,9 +127,10 @@ module.exports.newPost = async (ctx) => {
     }
 }
 
-module.exports.newLike = async (ctx) => {
+module.exports.newLike = async (ctx) => {//TODO rating
     try {
         const posts = ctx.db.Posts;
+        const users = ctx.db.Users;
         const likes = ctx.db.LikesToPosts;
         const token = getToken(ctx);
         const decode = await jwt.verify(token, config.token.accessToken);
@@ -135,14 +138,23 @@ module.exports.newLike = async (ctx) => {
         const prevLike = await likes.findOne({where: {
             userId: decode.id, postId: post.id
         }});
+        const one = await users.findOne({ where: { id: post.userId } })
         const body = ctx.request.body;
 
         if (prevLike !== null) {
             await module.exports.deleteLikeFromPost(ctx);
             if (prevLike.type !== body.type){
                 await module.exports.newLike(ctx);
+                if (body.type === 'like') await one.update({rating: one.rating+2});
+                else await one.update({rating: one.rating-2});
+            } else {
+                if (body.type === 'like') await one.update({rating: one.rating-1});
+                else await one.update({rating: one.rating+1});
             }
             return;
+        } else {
+            if (body.type === 'like') await one.update({rating: one.rating+1});
+            else await one.update({rating: one.rating-1});
         }
         await likes.create({
             publish_date: new Date(),

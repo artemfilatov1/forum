@@ -8,10 +8,10 @@ function home() {
         <Box display='flex'>
             <CustomCard title={'users'} 
                 content={'U can watch or find some people'}
-                to={`/db/users`}/>
+                to={`/users`}/>
             <CustomCard title={'posts'} 
                 content={'U can watch or find some post'}
-                to={`/db/posts`}/>
+                to={`/posts`}/>
         </Box>
     );
 

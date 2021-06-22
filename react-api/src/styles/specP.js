@@ -17,6 +17,17 @@ export const UseStyles = makeStyles({
             width:'90%',
         }
     },
+    categories: {
+        display: 'flex',
+        "& > *": {
+            paddingLeft: 15,
+            paddingRight: 15,
+            borderRadius: 100,
+            marginLeft: 10,
+            backgroundColor: '#f2f2f2',
+            fontSize: 13
+        }
+    },
     title: {
         margin: 'auto',
         marginTop: 40,
@@ -26,7 +37,7 @@ export const UseStyles = makeStyles({
     underTitle: {
         display: 'flex',
         color: 'gray',
-        padding: 3,
+        padding: 0,
         "& > *": {
             marginRight: 20,
             fontSize: 15

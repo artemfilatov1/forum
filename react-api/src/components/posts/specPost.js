@@ -3,19 +3,22 @@ import {sendDeleteUser} from '../../redux/modules/users';
 import {
     sendGetPostById,
     sendSetLike,
+    sendGetAllCategoriesFromPost,
+    sendDeletePost
 } from '../../redux/modules/posts';
 import * as rr from "react-redux";
 import * as rd from "react-router-dom";
-import {Avatar, ButtonBase, Box} from '@material-ui/core';
+import {Avatar, ButtonBase, Box, Button} from '@material-ui/core';
 import config from '../../config';
 import * as r from "react";
-import {logOut} from "../../redux/modules/users";
 import ThumbUpOutlinedIcon from '@material-ui/icons/ThumbUpOutlined';
 import ThumbDownOutlinedIcon from '@material-ui/icons/ThumbDownOutlined';
 import {UseStyles} from '../../styles/specP';
 import {parseToken} from '../../utils/parseToken';
 import RateReviewOutlinedIcon from '@material-ui/icons/RateReviewOutlined';
 import Comment from "./comment";
+import DeleteIcon from "@material-ui/icons/Delete";
+import CreateComment from "./createComment";
 
 function post() {
     const users = rr.useSelector(state => state.users);
@@ -26,7 +29,10 @@ function post() {
     const id = parseInt(rd.useParams().id);
     const decode = parseToken(users.token)
     let isLiked = null, isDisliked = null;
+    let isWriteColor = null;
     let map = new Map();
+
+    const [isWrite, setIsWrite] = r.useState(false);
 
     let clientId = '';
     if (decode) clientId = decode.id;
@@ -38,26 +44,32 @@ function post() {
         }
     },[dispatch]);
 
+    r.useEffect(() => {
+        dispatch(sendGetAllCategoriesFromPost(id));
+    },[dispatch]);
+
     if(posts.isLiked) isLiked = classes.clicked;
     if(posts.isDisliked) isDisliked = classes.clicked;
+
+    if (isWrite) isWriteColor = classes.clicked;
+    else isWriteColor = null;
 
     users.users.map(i => {
         map.set(i.id, i.profile_picture);
     })
 
     const handleDelete = () => {
-        dispatch(sendDeleteUser(id));
-        if (clientId === id){
-            dispatch(logOut());
-            history.push('/login');
-        } else {
-            history.push('/db/users');
-        }
+        dispatch(sendDeletePost(id));
+        history.push('/posts');
     }
 
     const handleSetLike = () => {
         if (!decode) return;
-        const param = {id: id, token: users.token, type: 'like', decode: decode}
+        const param = {id: id,
+            token: users.token,
+            type: 'like',
+            decode: decode,
+        }
         dispatch(sendSetLike(param));
         isDisliked = null; isLiked = null;
         if(posts.isLiked) isLiked = classes.clicked;
@@ -66,12 +78,18 @@ function post() {
 
     const handleSetDislike = (type) => {
         if (!decode) return;
-        const param = {id: id, token: users.token, type: 'dislike', decode: decode}
+        const param = {id: id,
+            token: users.token,
+            type: 'dislike',
+            decode: decode,
+        }
         dispatch(sendSetLike(param));
         isLiked = null; isDisliked = null;
         if(posts.isLiked) isLiked = classes.clicked;
         if(posts.isDisliked) isDisliked = classes.clicked;
     }
+
+    const handleWrite = () => {setIsWrite(!isWrite)}
 
     return (
         <div>
@@ -80,13 +98,23 @@ function post() {
                 <div className={classes.post}>
                     <div className={classes.title}>
                         <h2>{posts.specPost.title}</h2>
+                        <div className={classes.categories}>
+                            {posts.categories &&
+                            posts.categories.map(i => (
+                                <ButtonBase href={`/categories/${i.id}`} key={i.id}>
+                                    <p>{i.title}</p>
+                                </ButtonBase>
+                            ))
+                            }
+                        </div>
                         <div className={classes.underTitle}> 
                             <p>publish date: {posts.specPost.publish_date}</p>
                             <p>status: {posts.specPost.status}</p>
-                            <ButtonBase href={`/db/users/${posts.specPost.userId}`} style={{borderRadius:'100%', padding:5}}>
+                            <ButtonBase href={`/users/${posts.specPost.userId}`} style={{borderRadius:'100%', padding:5}}>
                                 <Avatar alt="Remy Sharp" src={`${config.url}/${map.get(posts.specPost.userId)}`} className={classes.img}/>
                             </ButtonBase>
                         </div>
+                        {}
                     </div>
                     <div className={classes.content}>
                         {posts.specPost.content}
@@ -109,14 +137,21 @@ function post() {
                             </ButtonBase>
                         </div>
                         <div>
-                            <ButtonBase style={{padding:4, borderRadius:100}}>
+                            <ButtonBase className={isWriteColor} onClick={handleWrite} style={{padding:4, borderRadius:100}}>
                                 <RateReviewOutlinedIcon/>
                             </ButtonBase>
                         </div>
+                        {users.user && (users.user.role === 'admin' || posts.specPost.userId === users.user.id) &&
+                        <Button onClick={handleDelete} style={{fontSize:12}} variant='contained' color='secondary'>
+                            <DeleteIcon fontSize='small'/>
+                            delete
+                        </Button>
+                        }
                     </Box>
                 </div>
                 <h2>Comments</h2>
-                {posts.comments && map &&
+                {isWrite && <CreateComment/>}
+                {posts.comments && posts.comments.length !== 0 && map &&
                 <div style={{marginBottom:100}}>
                     {posts.comments.map(i => (
                         <div key={i.comment.id}>
