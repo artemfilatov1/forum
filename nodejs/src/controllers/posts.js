@@ -4,7 +4,12 @@ const jwt = require('jsonwebtoken');
 module.exports.getAllPosts = async (ctx) => {
     try {
         const posts = ctx.db.Posts;
-        const all = await posts.findAll();
+        const {limit, offset} = ctx.query;
+        const all = await posts.findAll({
+            // limit: limit,
+            // offset: offset,
+            // where: {}
+        });
         ctx.body = all;
         ctx.status = 200;
     } catch (err){
@@ -127,7 +132,7 @@ module.exports.newPost = async (ctx) => {
     }
 }
 
-module.exports.newLike = async (ctx) => {//TODO rating
+module.exports.newLike = async (ctx) => {
     try {
         const posts = ctx.db.Posts;
         const users = ctx.db.Users;
@@ -194,7 +199,7 @@ module.exports.deletePost = async (ctx) => {
                 id: ctx.params.id
             },
         });
-        ctx.body = {message: 'deleted post'};
+        ctx.body = post;
         ctx.status = 200;
     } catch (err){
         ctx.body = {error: err.message};

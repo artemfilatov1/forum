@@ -12,6 +12,9 @@ function home() {
             <CustomCard title={'posts'} 
                 content={'U can watch or find some post'}
                 to={`/posts`}/>
+            <CustomCard title={'categories'}
+                 content={'U can watch or find some category'}
+                 to={`/categories`}/>
         </Box>
     );
 

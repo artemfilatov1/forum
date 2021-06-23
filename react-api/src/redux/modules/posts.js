@@ -5,9 +5,37 @@ import {convertDate} from "../../utils/date";
 
 export const sendGetAllPosts = createAsyncThunk(
     'posts/sendGetAllPosts',
-    async (thunkAPI) => {
+    async (param) => {
         try {
             const res = await axios.get(`${config.url}/api/posts`);
+            // const res = await axios.get(`${config.url}/api/posts?limit=${5}&offset=${param.page*5}`);
+            convertDate(res.data);
+            let posts = []
+            for (let i = 0; i < res.data.length; i++){
+                const id = res.data[i].id;
+                const post = res.data[i];
+                const resL = await axios.get(`${config.url}/api/posts/${id}/like`);
+                const comments = await axios.get(`${config.url}/api/posts/${id}/comments`);
+                let obj = {
+                    post: post,
+                    votes: resL.data.likes.length-resL.data.dislikes.length,
+                    answers: comments.data.length,
+                }
+                posts.push(obj)
+            }
+            // return {posts: posts, page: param.page};
+            return posts;
+        } catch (err) {
+            return {error: err.response.data.error};
+        }
+    }
+)
+
+export const sendGetAllPostsFromCategory = createAsyncThunk(
+    'posts/sendGetAllPosts',
+    async (id) => {
+        try {
+            const res = await axios.get(`${config.url}/api/categories/${id}/posts`);
             convertDate(res.data);
             let posts = []
             for (let i = 0; i < res.data.length; i++){
@@ -33,7 +61,9 @@ export const sendDeletePost = createAsyncThunk(
     'posts/sendDeletePost',
     async (id, thunkAPI) => {
         try {
-            await axios.delete(`${config.url}/api/posts/${id}`);
+            const res = await axios.delete(`${config.url}/api/posts/${id}`);
+            console.log(res.data);
+            return res.data;
         } catch (err) {
             return {error: err.response.data.error};
         }
@@ -239,6 +269,7 @@ const initialState = {
     status: 'idle',
     isLiked: false,
     isDisliked: false,
+    page: 1,
 };
 
 const slice = createSlice({
@@ -268,9 +299,24 @@ const slice = createSlice({
         },
         [sendDeletePost.fulfilled]: (state, action) => {
             state.specPost = null;
-            state.posts = null;
+            const tmp = [];
+            state.posts.map(i=>{
+                if (i.id !== action.payload.id){
+                    tmp.push(i);
+                }
+            });
+            state.posts = tmp;
         },
         [sendGetAllPosts.fulfilled]: (state, action) => {
+            state.posts = action.payload;
+            state.specPost = null;
+            state.comments = [];
+            state.likes = [];
+            state.dislikes = []
+            state.isLiked = false;
+            state.isDisliked = false;
+        },
+        [sendGetAllPostsFromCategory.fulfilled]: (state, action) => {
             state.posts = action.payload;
             state.specPost = null;
             state.comments = [];

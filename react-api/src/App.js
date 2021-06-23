@@ -11,12 +11,15 @@ import NotFound from "./components/extra/notfound";
 import Users from "./components/users/users";
 import Posts from "./components/posts/posts";
 import UserAcc from "./components/users/userAcc";
-import specPost from "./components/posts/specPost";
+import SpecPost from "./components/posts/specPost";
 import Name from "./components/users/name";
 import FullName from "./components/users/fullname";
 import Password from "./components/users/password";
 import Email from "./components/users/email";
 import CreatePost from "./components/posts/createPost";
+import Categories from "./components/categories/categories";
+import SpecCategory from "./components/categories/specCategory";
+import CreateCategory from "./components/categories/createCategory";
 
 import {RouteGuest} from "./components/extra/route";
 import {RouteClient} from "./components/extra/route";
@@ -28,6 +31,7 @@ function App(){
             <Toolbar/>
             <Switch>
                 <RouteClient exact path="/createpost" component={CreatePost}/>
+                <RouteClient exact path="/createcategory" component={CreateCategory}/>
                 <RouteClient exact path="/name" component={Name}/>
                 <RouteClient exact path="/fullname" component={FullName}/>
                 <RouteClient exact path="/password" component={Password}/>
@@ -36,7 +40,9 @@ function App(){
                 <RouteGuest exact path="/register" component={Register}/>
                 <RouteGuest exact path="/register/verify-email/:token" component={RegisterVerify}/>
                 <Route exact path="/users/:id" component={UserAcc} />
-                <Route exact path="/posts/:id" component={specPost} />
+                <Route exact path="/posts/:id" component={SpecPost} />
+                <Route exact path="/categories/:id" component={SpecCategory} />
+                <Route exact path="/categories" component={Categories} />
                 <Route exact path="/users" component={Users} />
                 <Route exact path="/posts" component={Posts} />
                 <Route exact path="/" component={Home} />
