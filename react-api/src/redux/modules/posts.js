@@ -7,13 +7,15 @@ export const sendGetAllPosts = createAsyncThunk(
     'posts/sendGetAllPosts',
     async (param) => {
         try {
-            const res = await axios.get(`${config.url}/api/posts`);
-            // const res = await axios.get(`${config.url}/api/posts?limit=${5}&offset=${param.page*5}`);
+            const lim = 5;
+            const res = await axios.get(`${config.url}/api/posts?limit=${lim}&offset=${lim*(param.page-1)}`);
+
             convertDate(res.data);
+
             let posts = []
-            for (let i = 0; i < res.data.length; i++){
-                const id = res.data[i].id;
-                const post = res.data[i];
+            for (let i = 0; i < res.data.posts.length; i++){
+                const id = res.data.posts[i].id;
+                const post = res.data.posts[i];
                 const resL = await axios.get(`${config.url}/api/posts/${id}/like`);
                 const comments = await axios.get(`${config.url}/api/posts/${id}/comments`);
                 let obj = {
@@ -23,8 +25,8 @@ export const sendGetAllPosts = createAsyncThunk(
                 }
                 posts.push(obj)
             }
-            // return {posts: posts, page: param.page};
-            return posts;
+
+            return {posts: posts, page: param.page, count: res.data.count};
         } catch (err) {
             return {error: err.response.data.error};
         }
@@ -50,7 +52,7 @@ export const sendGetAllPostsFromCategory = createAsyncThunk(
                 }
                 posts.push(obj)
             }
-            return posts;
+            return {posts};
         } catch (err) {
             return {error: err.response.data.error};
         }
@@ -260,6 +262,7 @@ export const sendCreateComment = createAsyncThunk(
 
 const initialState = {
     posts: [],
+    page: 1,
     specPost: null,
     categories: [],
     comments: [],
@@ -269,7 +272,7 @@ const initialState = {
     status: 'idle',
     isLiked: false,
     isDisliked: false,
-    page: 1,
+    count: 1,
 };
 
 const slice = createSlice({
@@ -308,7 +311,9 @@ const slice = createSlice({
             state.posts = tmp;
         },
         [sendGetAllPosts.fulfilled]: (state, action) => {
-            state.posts = action.payload;
+            state.posts = action.payload.posts;
+            if (action.payload.page) state.page = action.payload.page;
+            state.count = action.payload.count;
             state.specPost = null;
             state.comments = [];
             state.likes = [];
@@ -317,22 +322,18 @@ const slice = createSlice({
             state.isDisliked = false;
         },
         [sendGetAllPostsFromCategory.fulfilled]: (state, action) => {
-            state.posts = action.payload;
-            state.specPost = null;
-            state.comments = [];
-            state.likes = [];
-            state.dislikes = []
-            state.isLiked = false;
-            state.isDisliked = false;
-        },
-        [sendSetLikeToComment.fulfilled]: (state, action) => {
-            state.comments = action.payload;
+            state.posts = action.payload.posts;
+            state.count = action.payload.count;
+            if (action.payload.page) state.page = action.payload.page;
         },
         [sendSetLike.fulfilled]: (state, action) => {
             state.likes = action.payload.likes;
             state.dislikes = action.payload.dislikes;
             state.isLiked = action.payload.isLiked;
             state.isDisliked = action.payload.isDisliked;
+        },
+        [sendSetLikeToComment.fulfilled]: (state, action) => {
+            state.comments = action.payload;
         },
         [sendSetLikeToComment.fulfilled]: (state, action) => {
             state.comments = action.payload;

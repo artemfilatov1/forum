@@ -19,7 +19,7 @@ app.use(routes.routes())
 app.listen(config.app.port, async () => {
     // await db.sequelize.sync({force: true}); //or
     await db.sequelize.sync();
-    // await seed.set(5);
+    // await seed.set(100);
     console.log('db sync');
     console.log(`app listening at http://localhost:${config.app.port}`);
 });

@@ -5,12 +5,12 @@ module.exports.getAllPosts = async (ctx) => {
     try {
         const posts = ctx.db.Posts;
         const {limit, offset} = ctx.query;
-        const all = await posts.findAll({
-            // limit: limit,
-            // offset: offset,
-            // where: {}
+        const all = await posts.findAndCountAll({
+            limit: limit,
+            offset: offset,
+            where: {}
         });
-        ctx.body = all;
+        ctx.body = {posts: all.rows, count: all.count};
         ctx.status = 200;
     } catch (err){
         ctx.body = {error: err.message};

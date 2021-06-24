@@ -1,5 +1,6 @@
 import React from "react";
 import {Box} from '@material-ui/core';
+import {Pagination} from '@material-ui/lab';
 import { sendGetAllPosts } from '../../redux/modules/posts'
 import { sendGetAllUsers} from '../../redux/modules/users'
 import * as rr from "react-redux";
@@ -14,7 +15,7 @@ function posts() {
 
     r.useEffect(() => {
         if (posts.status === 'idle'){
-            dispatch(sendGetAllPosts());
+            dispatch(sendGetAllPosts({page: 1}));
         }
     }, [dispatch])
 
@@ -28,7 +29,11 @@ function posts() {
         map.set(i.id, i.profile_picture);
     })
 
-    return ( 
+    const handleChange = (event, value) => {
+        dispatch(sendGetAllPosts({page: value}));
+    }
+
+    return (
         <Box>
             <h1>Posts</h1>
             {posts.posts.length !== 0 && map.size>0 &&
@@ -47,6 +52,11 @@ function posts() {
                         </div>
                     ))}
                 </Box>
+            }
+            {posts.posts.length > 0 &&
+            <div style={{margin: 20}}>
+                <Pagination count={Math.ceil(posts.count/5)} page={posts.page} onChange={handleChange} variant="outlined" color="primary" />
+            </div>
             }
         </Box>
     );
