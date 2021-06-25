@@ -29,6 +29,7 @@ export default function FormDialog(props) {
                             id="avatar"
                             name="avatar"
                             onChange={(e) => props.setFile(e.target.files[0])}
+                            accept=".jpg, .jpeg, .png"
                             required
                         />
                     </DialogContent>

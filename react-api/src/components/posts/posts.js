@@ -18,12 +18,6 @@ function posts() {
         }
     }, [dispatch])
 
-    r.useEffect(() => {
-        if (users.status === 'idle'){
-            dispatch(sendGetAllUsers())
-        }
-    },[dispatch])
-
     const handleChange = (event, value) => {
         dispatch(sendGetAllPosts({page: value}));
     }
@@ -50,7 +44,7 @@ function posts() {
             }
             {posts.posts.length > 0 &&
             <div style={{margin: 20}}>
-                <Pagination count={Math.ceil(posts.count/5)} page={posts.page} onChange={handleChange} variant="outlined" color="primary" />
+                <Pagination count={Math.ceil(posts.count/10)} page={posts.page} onChange={handleChange} variant="outlined" color="primary" />
             </div>
             }
         </Box>

@@ -7,7 +7,7 @@ export const sendGetAllPosts = createAsyncThunk(
     'posts/sendGetAllPosts',
     async (param) => {
         try {
-            const lim = 5;
+            const lim = 10;
             const res = await axios.get(`${config.url}/api/posts?limit=${lim}&offset=${lim*(param.page-1)}`);
 
             convertDate(res.data);

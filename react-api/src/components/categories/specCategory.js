@@ -32,10 +32,6 @@ function category() {
     }, [dispatch])
 
     r.useEffect(() => {
-        if (users.status === 'idle') dispatch(sendGetAllUsers())
-    },[dispatch])
-
-    r.useEffect(() => {
         dispatch(sendGetCategoryById(id));
     },[dispatch])
 

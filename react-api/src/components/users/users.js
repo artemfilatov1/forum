@@ -19,6 +19,7 @@ function users() {
     },[dispatch])
 
     const handleChange = (event, value) => {
+
         dispatch(sendGetAllUsers({page: value}));
     }
 
@@ -39,7 +40,7 @@ function users() {
             }
             {users.users.length > 0 &&
             <div style={{margin: 20}}>
-                <Pagination count={Math.ceil(users.count/5)} page={users.page} onChange={handleChange} variant="outlined" color="primary" />
+                <Pagination count={Math.ceil(users.count/10)} page={users.page} onChange={handleChange} variant="outlined" color="primary" />
             </div>
             }
         </div>

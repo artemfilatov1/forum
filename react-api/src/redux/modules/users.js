@@ -19,11 +19,11 @@ export const sendGetAllUsers = createAsyncThunk(
     'users/sendGetAllUsers',
     async (param) => {
         try {
-            const lim = 5
+            const lim = 10
             const res = await axios.get(`${config.url}/api/users?limit=${lim}&offset=${lim*(param.page-1)}`);
             return {users: res.data.users, count: res.data.count, page: param.page};
         } catch (err) {
-
+            console.log(err);
         }
     }
 )
@@ -135,9 +135,9 @@ const slice = createSlice({
     },
     extraReducers: {
         [sendGetAllUsers.fulfilled]: (state, action) => {
-            state.users = action.payload.users;
             state.count = action.payload.count;
             state.page = action.payload.page;
+            state.users = action.payload.users;
             state.specUser = null;
         },
         [sendGetUserById.fulfilled]: (state, action) => {
