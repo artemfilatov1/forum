@@ -9,6 +9,7 @@ import {UseStyles} from '../../styles/specP';
 import {parseToken} from '../../utils/parseToken';
 import {sendDeleteComment, sendSetLikeToComment, sendGetPostById} from '../../redux/modules/posts';
 import DeleteIcon from "@material-ui/icons/Delete";
+import * as r from "react";
 
 function comment(props) {
     const users = rr.useSelector(state => state.users);
@@ -64,9 +65,11 @@ function comment(props) {
             <div className={classes.title}>
                 <div className={classes.underTitle}>
                     <p className={classes.underP}>publish date: {props.publish_date}</p>
+                    {props.user &&
                     <ButtonBase href={`/users/${props.id}`} style={{borderRadius:'100%', padding:5}}>
-                        <Avatar alt="Remy Sharp" src={`${config.url}/${props.map.get(props.userId)}`} className={classes.img}/>
+                        <Avatar alt="Remy Sharp" src={`${config.url}/${props.user.profile_picture}`} className={classes.img}/>
                     </ButtonBase>
+                    }
                 </div>
             </div>
             <div className={classes.content}>

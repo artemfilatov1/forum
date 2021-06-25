@@ -30,7 +30,6 @@ function post() {
     const decode = parseToken(users.token)
     let isLiked = null, isDisliked = null;
     let isWriteColor = null;
-    let map = new Map();
 
     const [isWrite, setIsWrite] = r.useState(false);
 
@@ -53,10 +52,6 @@ function post() {
 
     if (isWrite) isWriteColor = classes.clicked;
     else isWriteColor = null;
-
-    users.users.map(i => {
-        map.set(i.id, i.profile_picture);
-    })
 
     const handleDelete = () => {
         dispatch(sendDeletePost(id));
@@ -110,11 +105,12 @@ function post() {
                         <div className={classes.underTitle}> 
                             <p>publish date: {posts.specPost.publish_date}</p>
                             <p>status: {posts.specPost.status}</p>
+                            {posts.user && posts.user.profile_picture &&
                             <ButtonBase href={`/users/${posts.specPost.userId}`} style={{borderRadius:'100%', padding:5}}>
-                                <Avatar alt="Remy Sharp" src={`${config.url}/${map.get(posts.specPost.userId)}`} className={classes.img}/>
+                                <Avatar alt="Remy Sharp" src={`${config.url}/${posts.user.profile_picture}`} className={classes.img}/>
                             </ButtonBase>
+                            }
                         </div>
-                        {}
                     </div>
                     <div className={classes.content}>
                         {posts.specPost.content}
@@ -151,7 +147,7 @@ function post() {
                 </div>
                 <h2>Comments</h2>
                 {isWrite && <CreateComment/>}
-                {posts.comments && posts.comments.length !== 0 && map &&
+                {posts.comments && posts.comments.length !== 0 &&
                 <div style={{marginBottom:100}}>
                     {posts.comments.map(i => (
                         <div key={i.comment.id}>
@@ -159,7 +155,7 @@ function post() {
                                 id={i.comment.id}
                                 content={i.comment.content}
                                 userId={i.comment.userId}
-                                map={map}
+                                user={i.user}
                                 publish_date={i.comment.publish_date}
                                 isLiked={i.isLiked}
                                 isDisliked={i.isDisliked}

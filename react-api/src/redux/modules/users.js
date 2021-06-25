@@ -17,10 +17,11 @@ export const sendGetUserById = createAsyncThunk(
 
 export const sendGetAllUsers = createAsyncThunk(
     'users/sendGetAllUsers',
-    async (thunkAPI) => {
+    async (param) => {
         try {
-            const res = await axios.get(`${config.url}/api/users`);
-            return res.data;
+            const lim = 5
+            const res = await axios.get(`${config.url}/api/users?limit=${lim}&offset=${lim*(param.page-1)}`);
+            return {users: res.data.users, count: res.data.count, page: param.page};
         } catch (err) {
 
         }
@@ -113,6 +114,8 @@ const initialState = {
     status: 'idle',
     token: null,
     user: null,
+    count: 1,
+    page: 1,
 };
 
 const slice = createSlice({
@@ -131,12 +134,14 @@ const slice = createSlice({
         },
     },
     extraReducers: {
+        [sendGetAllUsers.fulfilled]: (state, action) => {
+            state.users = action.payload.users;
+            state.count = action.payload.count;
+            state.page = action.payload.page;
+            state.specUser = null;
+        },
         [sendGetUserById.fulfilled]: (state, action) => {
             state.specUser = action.payload;
-        },
-        [sendGetAllUsers.fulfilled]: (state, action) => {
-            state.users = action.payload;
-            state.specUser = null;
         },
         [sendDeleteUser.fulfilled]: (state, action) => {
             state.specUser = null;

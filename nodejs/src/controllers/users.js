@@ -5,8 +5,13 @@ const config = require('../config');
 module.exports.getAllUsers = async (ctx) => {
     try {
         const users = ctx.db.Users;
-        const all = await users.findAll();
-        ctx.body = all;
+        const {limit, offset} = ctx.query;
+        const all = await users.findAndCountAll({
+            limit: limit,
+            offset: offset,
+            where: {}
+        });
+        ctx.body = {users: all.rows, count: all.count};
     } catch (err) {
         ctx.body = { error: err.message };
         ctx.status = 400;

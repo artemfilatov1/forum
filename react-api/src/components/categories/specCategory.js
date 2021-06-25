@@ -23,7 +23,6 @@ function category() {
     const classes = UseStyles();
     const id = parseInt(rd.useParams().id);
     const decode = parseToken(users.token)
-    let map = new Map();
 
     let clientId = '';
     if (decode) clientId = decode.id;
@@ -40,13 +39,11 @@ function category() {
         dispatch(sendGetCategoryById(id));
     },[dispatch])
 
-    users.users.map(i => {
-        map.set(i.id, i.profile_picture);
-    })
-
     const handleDelete = () => {
         dispatch(sendDeleteCategory({id: id, history: history}));
     }
+
+    // console.log(posts);
 
     return (
         <div>
@@ -65,7 +62,7 @@ function category() {
                     }
                 </div>
                 <h2>Posts</h2>
-                {posts.posts.length !== 0 && map.size>0 &&
+                {posts.posts.length !== 0 && posts.posts[0].user &&
                 <Box>
                     {posts.posts.map(i => (
                         <div key={i.post.id}>
@@ -73,7 +70,7 @@ function category() {
                                 title={i.post.title}
                                 content={i.post.content}
                                 to={`/posts/${i.post.id}`}
-                                author={map.get(i.post.userId)}
+                                author={i.user.profile_picture}
                                 userId={i.post.userId}
                                 votes={i.votes}
                                 answers={i.answers}

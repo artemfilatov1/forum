@@ -18,14 +18,15 @@ export const sendGetAllPosts = createAsyncThunk(
                 const post = res.data.posts[i];
                 const resL = await axios.get(`${config.url}/api/posts/${id}/like`);
                 const comments = await axios.get(`${config.url}/api/posts/${id}/comments`);
+                const user = await axios.get(`${config.url}/api/users/${post.userId}`);
                 let obj = {
                     post: post,
+                    user: user.data,
                     votes: resL.data.likes.length-resL.data.dislikes.length,
                     answers: comments.data.length,
                 }
                 posts.push(obj)
             }
-
             return {posts: posts, page: param.page, count: res.data.count};
         } catch (err) {
             return {error: err.response.data.error};
@@ -45,8 +46,11 @@ export const sendGetAllPostsFromCategory = createAsyncThunk(
                 const post = res.data[i];
                 const resL = await axios.get(`${config.url}/api/posts/${id}/like`);
                 const comments = await axios.get(`${config.url}/api/posts/${id}/comments`);
+                const user = await axios.get(`${config.url}/api/users/${post.userId}`);
+
                 let obj = {
                     post: post,
+                    user: user.data,
                     votes: resL.data.likes.length-resL.data.dislikes.length,
                     answers: comments.data.length,
                 }
@@ -119,6 +123,7 @@ export const sendSetLikeToComment = createAsyncThunk(
             for (let i = 0; i < res.data.length; i++){
                 const com = res.data[i];
                 const resL = await axios.get(`${config.url}/api/comments/${com.id}/likes`);
+                const userComment = await axios.get(`${config.url}/api/users/${com.userId}`);
                 let l = resL.data.likes;
                 if (l.length === 0) l = [];
                 let d = resL.data.dislikes;
@@ -139,6 +144,7 @@ export const sendSetLikeToComment = createAsyncThunk(
                     dislikes: d,
                     isLiked: isLikedComment,
                     isDisliked: isDislikedComment,
+                    user: userComment.data,
                 }
                 comments.push(obj);
             }
@@ -155,6 +161,7 @@ export const sendGetPostById = createAsyncThunk(
         try {
             let header = { headers: { Authorization: `Bearer ${param.token}` }}
             const resPost = await axios.get(`${config.url}/api/posts/${param.id}`);
+            const user = await axios.get(`${config.url}/api/users/${resPost.data.userId}`);
             const post = resPost.data;
 
             convertDate(post);
@@ -167,6 +174,7 @@ export const sendGetPostById = createAsyncThunk(
             for (let i = 0; i < res.data.length; i++){
                 const com = res.data[i];
                 const resL = await axios.get(`${config.url}/api/comments/${com.id}/likes`);
+                const userComment = await axios.get(`${config.url}/api/users/${com.userId}`);
                 let l = resL.data.likes;
                 if (l.length === 0) l = [];
                 let d = resL.data.dislikes;
@@ -187,6 +195,7 @@ export const sendGetPostById = createAsyncThunk(
                     dislikes: d,
                     isLiked: isLikedComment,
                     isDisliked: isDislikedComment,
+                    user: userComment.data,
                 }
                 comments.push(obj);
             }
@@ -201,6 +210,7 @@ export const sendGetPostById = createAsyncThunk(
 
             return {
                 post: post,
+                user: user.data,
                 comments: comments,
                 isLiked: isLiked,
                 isDisliked: isDisliked,
@@ -245,6 +255,7 @@ export const sendCreateComment = createAsyncThunk(
         try {
             let header = { headers: { Authorization: `Bearer ${param.token}` }}
             const res = await axios.post(`${config.url}/api/posts/${param.id}/comments`, param.user, header);
+            const user = await axios.get(`${config.url}/api/users/${res.data.userId}`, param.user, header);
             convertDate(res.data);
             const obj = {
                 comment: res.data,
@@ -252,6 +263,7 @@ export const sendCreateComment = createAsyncThunk(
                 dislikes: [],
                 isLiked: false,
                 isDisliked: false,
+                user: user.data,
             }
             return {comment: obj, error: null};
         } catch (err) {
@@ -264,6 +276,7 @@ const initialState = {
     posts: [],
     page: 1,
     specPost: null,
+    user: null,
     categories: [],
     comments: [],
     likes: [],
@@ -282,6 +295,7 @@ const slice = createSlice({
     extraReducers: {
         [sendGetPostById.fulfilled]: (state, action) => {
             state.specPost = action.payload.post;
+            state.user = action.payload.user;
             state.comments = action.payload.comments;
             state.likes = action.payload.likes;
             state.dislikes = action.payload.dislikes;

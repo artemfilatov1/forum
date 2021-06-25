@@ -16,7 +16,6 @@ function createPost() {
     const id = parseInt(rd.useParams().id);
 
     const [content, setContent] = r.useState('');
-    const history = rd.useHistory();
 
     r.useEffect(() => {
         dispatch(sendGetAllCategories());
