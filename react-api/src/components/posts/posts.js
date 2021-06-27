@@ -6,6 +6,10 @@ import { sendGetAllUsers, sendGetUserById} from '../../redux/modules/users'
 import * as rr from "react-redux";
 import * as r from "react";
 import {CustomCard} from '../extra/card'
+import Tooltip from "@material-ui/core/Tooltip";
+import {Link} from "react-router-dom";
+import Fab from "@material-ui/core/Fab";
+import AddIcon from "@material-ui/icons/Add";
 
 function posts() {
     const posts = rr.useSelector(state => state.posts);
@@ -25,6 +29,15 @@ function posts() {
     return (
         <Box>
             <h1>Posts</h1>
+            {users.user &&
+            <Tooltip title="create post" aria-label="add">
+                <Link to={'/createpost'}>
+                    <Fab color="primary" size="small">
+                        <AddIcon />
+                    </Fab>
+                </Link>
+            </Tooltip>
+            }
             {posts.posts.length !== 0 &&
                 <Box>
                     {posts.posts.map(i => (
@@ -42,7 +55,7 @@ function posts() {
                     ))}
                 </Box>
             }
-            {posts.posts.length > 0 &&
+            {posts.count > 10 &&
             <div style={{margin: 20}}>
                 <Pagination count={Math.ceil(posts.count/10)} page={posts.page} onChange={handleChange} variant="outlined" color="primary" />
             </div>

@@ -7,6 +7,10 @@ import * as r from "react";
 import config from "../../config";
 import {Pagination} from "@material-ui/lab";
 import {sendGetAllPosts} from "../../redux/modules/posts";
+import Tooltip from "@material-ui/core/Tooltip";
+import {Link} from "react-router-dom";
+import Fab from "@material-ui/core/Fab";
+import AddIcon from "@material-ui/icons/Add";
 
 function users() {
     const users = rr.useSelector(state => state.users);
@@ -26,6 +30,15 @@ function users() {
     return (
         <div style={{width: '100%'}}>
             <h1>Users</h1>
+            {users.user && (users.user.role === 'admin') &&
+            <Tooltip title="create user" aria-label="add">
+                <Link to={'/createuser'}>
+                    <Fab color="primary" size="small">
+                        <AddIcon />
+                    </Fab>
+                </Link>
+            </Tooltip>
+            }
             {users.users && users.users.length !== 0 &&
                 <Box display='flex' style={{flexWrap: 'wrap'}}>
                     {users.users.map(i => (
@@ -38,7 +51,7 @@ function users() {
                     ))}
                 </Box>
             }
-            {users.users.length > 0 &&
+            {users.count > 10 &&
             <div style={{margin: 20}}>
                 <Pagination count={Math.ceil(users.count/10)} page={users.page} onChange={handleChange} variant="outlined" color="primary" />
             </div>

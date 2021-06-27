@@ -39,8 +39,7 @@ module.exports.createUser = async (ctx) => {
         const email = await users.findOne({ where: { email: user.email } });
         if (login !== null) throw new Error('login is busy');
         if (email !== null) throw new Error('email is busy');
-        const usr = await users.create(user);
-        ctx.body = usr;
+        ctx.body = await users.create(user);
         ctx.status = 201;
     } catch (err) {
         ctx.body = { error: err.message };

@@ -39,6 +39,20 @@ export const sendDeleteUser = createAsyncThunk(
     }
 )
 
+export const sendCreateUser = createAsyncThunk(
+    'users/sendDeleteUser',
+    async (param) => {
+        try {
+            let header = { headers: { Authorization: `Bearer ${param.token}` }}
+            const user = await axios.post(`${config.url}/api/users`, param.user, header);
+            param.history.push(`/users/${user.data.id}`);
+            return {error: null};
+        } catch (err) {
+            return {error: err.response.data.error};
+        }
+    }
+)
+
 export const sendSetAvatar = createAsyncThunk(
     'users/sendSetAvatar',
     async (param, thunkAPI) => {
@@ -146,6 +160,9 @@ const slice = createSlice({
         [sendDeleteUser.fulfilled]: (state, action) => {
             state.specUser = null;
             state.users = null;
+        },
+        [sendCreateUser.fulfilled]: (state, action) => {
+            state.error = action.payload.error;
         },
         [sendSetAvatar.fulfilled]: (state, action) => {
             state.specUser.profile_picture = action.payload;

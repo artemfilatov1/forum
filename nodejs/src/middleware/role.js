@@ -33,6 +33,7 @@ module.exports.isAdmin = async (ctx, next) => {
 
     try {
         const decode = await jwt.verify(token, config.token.accessToken);
+        console.log(111);
         const user = await users.findOne({where : {id: decode.id}})
         if (user.role === 'admin') {
             ctx.authToken = user.id;

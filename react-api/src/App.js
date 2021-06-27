@@ -20,6 +20,7 @@ import CreatePost from "./components/posts/createPost";
 import Categories from "./components/categories/categories";
 import SpecCategory from "./components/categories/specCategory";
 import CreateCategory from "./components/categories/createCategory";
+import CreateUser from "./components/users/createUser";
 
 import {RouteGuest} from "./components/extra/route";
 import {RouteClient} from "./components/extra/route";
@@ -30,6 +31,7 @@ function App(){
         <div className="App">
             <Toolbar/>
             <Switch>
+                <RouteClient exact path="/createuser" component={CreateUser}/>
                 <RouteClient exact path="/createpost" component={CreatePost}/>
                 <RouteClient exact path="/createcategory" component={CreateCategory}/>
                 <RouteClient exact path="/name" component={Name}/>
